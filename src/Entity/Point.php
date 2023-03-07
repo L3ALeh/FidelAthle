@@ -20,6 +20,9 @@ class Point
     #[ORM\ManyToOne]
     private ?Recompense $laRecompense = null;
 
+    #[ORM\Column]
+    private ?int $nombre = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +48,18 @@ class Point
     public function setLaRecompense(?Recompense $laRecompense): self
     {
         $this->laRecompense = $laRecompense;
+
+        return $this;
+    }
+
+    public function getNombre(): ?int
+    {
+        return $this->nombre;
+    }
+
+    public function setNombre(int $nombre): self
+    {
+        $this->nombre = $nombre;
 
         return $this;
     }

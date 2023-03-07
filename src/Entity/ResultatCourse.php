@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ResultatCourseRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ResultatCourseRepository::class)]
@@ -20,6 +21,15 @@ class ResultatCourse
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $leUser = null;
+
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTimeInterface $temps = null;
+
+    #[ORM\Column]
+    private ?float $vitesseMoyenne = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $position = null;
 
     public function getId(): ?int
     {
@@ -46,6 +56,42 @@ class ResultatCourse
     public function setLeUser(?User $leUser): self
     {
         $this->leUser = $leUser;
+
+        return $this;
+    }
+
+    public function getTemps(): ?\DateTimeInterface
+    {
+        return $this->temps;
+    }
+
+    public function setTemps(\DateTimeInterface $temps): self
+    {
+        $this->temps = $temps;
+
+        return $this;
+    }
+
+    public function getVitesseMoyenne(): ?float
+    {
+        return $this->vitesseMoyenne;
+    }
+
+    public function setVitesseMoyenne(float $vitesseMoyenne): self
+    {
+        $this->vitesseMoyenne = $vitesseMoyenne;
+
+        return $this;
+    }
+
+    public function getPosition(): ?string
+    {
+        return $this->position;
+    }
+
+    public function setPosition(string $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }
