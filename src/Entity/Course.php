@@ -25,7 +25,7 @@ class Course
     private ?float $distance = null;
 
     #[ORM\Column]
-    private ?float $pix = null;
+    private ?float $prix = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
@@ -71,14 +71,14 @@ class Course
         return $this;
     }
 
-    public function getPix(): ?float
+    public function getPrix(): ?float
     {
-        return $this->pix;
+        return $this->prix;
     }
 
-    public function setPix(float $pix): self
+    public function setPrix(float $prix): self
     {
-        $this->pix = $pix;
+        $this->prix = $prix;
 
         return $this;
     }

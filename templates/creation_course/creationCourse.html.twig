@@ -1,0 +1,22 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TestController!{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+        $('.js-datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <input class = "btn btn-primary" type="submit"/>
+{{ form_end(form) }}
+
+{% endblock %}

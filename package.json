@@ -4,7 +4,7 @@
         "@babel/preset-env": "^7.16.0",
         "@hotwired/stimulus": "^3.0.0",
         "@symfony/stimulus-bridge": "^3.2.0",
-        "@symfony/webpack-encore": "^4.0.0",
+        "@symfony/webpack-encore": "^4.2.0",
         "core-js": "^3.23.0",
         "regenerator-runtime": "^0.13.9",
         "sass": "^1.58.3",
@@ -23,6 +23,9 @@
     },
     "dependencies": {
         "@popperjs/core": "^2.11.6",
-        "bootstrap": "^5.2.3"
+        "bootstrap": "^5.2.3",
+        "vue": "^3.2.47",
+        "vue-loader": "^17.0.1",
+        "vue-template-compiler": "^2.7.14"
     }
 }
