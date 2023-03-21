@@ -11,7 +11,7 @@ class ActionControlController extends AbstractController
     #[Route('/action/control', name: 'retour')]
     public function index(): Response
     {
-        return $this->render('action_control/index.html.twig', [
+        return $this->render('base.html.twig', [
             'controller_name' => 'ActionControlController',
         ]);
     }

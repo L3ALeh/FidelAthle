@@ -19,6 +19,9 @@ class Recompense
     #[ORM\Column]
     private ?float $valeur = null;
 
+    #[ORM\Column]
+    private ?int $valeurPoints = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +47,18 @@ class Recompense
     public function setValeur(float $valeur): self
     {
         $this->valeur = $valeur;
+
+        return $this;
+    }
+
+    public function getValeurPoints(): ?int
+    {
+        return $this->valeurPoints;
+    }
+
+    public function setValeurPoints(int $valeurPoints): self
+    {
+        $this->valeurPoints = $this->getValeur()*0.30;
 
         return $this;
     }
