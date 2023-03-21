@@ -14,10 +14,6 @@ class Course
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?CategorieCourse $uneCategorieCourse = null;
-
     #[ORM\Column(length: 255)]
     private ?string $nomCourse = null;
 
@@ -30,21 +26,17 @@ class Course
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?NiveauCourse $unNiveauCourse = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TypeCourse $unTypeCourse = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUneCategorieCourse(): ?CategorieCourse
-    {
-        return $this->uneCategorieCourse;
-    }
-
-    public function setUneCategorieCourse(?CategorieCourse $uneCategorieCourse): self
-    {
-        $this->uneCategorieCourse = $uneCategorieCourse;
-
-        return $this;
     }
 
     public function getNomCourse(): ?string
@@ -91,6 +83,30 @@ class Course
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getUnNiveauCourse(): ?NiveauCourse
+    {
+        return $this->unNiveauCourse;
+    }
+
+    public function setUnNiveauCourse(?NiveauCourse $unNiveauCourse): self
+    {
+        $this->unNiveauCourse = $unNiveauCourse;
+
+        return $this;
+    }
+
+    public function getUnTypeCourse(): ?TypeCourse
+    {
+        return $this->unTypeCourse;
+    }
+
+    public function setUnTypeCourse(?TypeCourse $unTypeCourse): self
+    {
+        $this->unTypeCourse = $unTypeCourse;
 
         return $this;
     }
