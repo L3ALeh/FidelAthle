@@ -6,9 +6,11 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
+import '@fortawesome/fontawesome-free/css/all.css'
 import './styles/app.scss';
-
+import { createApp } from 'vue';
+import ListeCourses from './js/ListeCourses.vue'
+createApp(ListeCourses).mount('#liste-course')
 import { Tooltip, Toast, Popover } from 'bootstrap';
-
 // start the Stimulus application
 import './bootstrap';
