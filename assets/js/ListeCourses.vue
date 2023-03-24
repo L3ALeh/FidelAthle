@@ -22,7 +22,7 @@
                         <td>{{ laCourse.prixCourse }}</td>
                         <td>{{ laCourse.typeCourse }}</td>
                         <td>{{ laCourse.niveauCourse }}</td>
-                        <td><button>S'inscrire</button></td>
+                        <td><button :disabled="coursesInscrites.indexOf(laCourse.id) !== -1" v-on:click="inscription(laCourse.id)">S'inscrire</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -34,6 +34,7 @@
 export default {
     data() {
         return {
+            userId : null,
             lesCourses : null,
             lesIntitules : [ {lab:'Nom', classe:' ', order:0, sort:'nomCourse', id:0},
             { lab:'Date', classe:' ', order:0, sort:'dateCourse', id:1},
@@ -42,9 +43,17 @@ export default {
             { lab:'Type', classe:' ', order:0, sort:'typeCourse', id:4},
             { lab:'Niveau', classe:' ', order:0, sort:'niveauCourse', id:5},
             { lab:'Inscription', classe:' ', order:0, sort:'niveauCourse', id:6} ],
+            coursesInscrites : []
         }
     },
     methods: {
+        inscription(indexCourse) {
+            fetch("/api/inscription/" + this.userId.id + "/" + indexCourse, {'method':'GET'})
+            .then(response => response.json())
+            .then(data => {
+                this.coursesInscrites.push(indexCourse);
+            })
+        },
         action(index) {
             const intitule = this.lesIntitules[index];
             this.lesIntitules.forEach((item, i) => {
@@ -90,6 +99,8 @@ export default {
         }
     },
     created() {
+        const appElement = document.getElementById('liste-course')
+        this.userId = JSON.parse(appElement.getAttribute('data-user'))
         this.miseajour()
         setInterval(() => {
             this.miseajour();

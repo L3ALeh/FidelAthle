@@ -2,8 +2,7 @@
 
 {# début du bloc body #}
 {% block body %}
-
-<div id='liste-course'>
+<div id='liste-course' data-user="{{ app.user|serialize(format = 'json') }}">
     {# L'appli Vue.js vivra ici #}
 </div>
 

@@ -18,18 +18,18 @@ class ResultatCourse
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $uneCourse = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $leUser = null;
-
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $temps = null;
 
-    #[ORM\Column]
+    #[ORM\Column (nullable: true)]
     private ?float $vitesseMoyenne = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $position = null;
+
+    #[ORM\ManyToOne(inversedBy: 'lesResultatsCourses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $leUser = null;
 
     public function getId(): ?int
     {
@@ -44,18 +44,6 @@ class ResultatCourse
     public function setUneCourse(?Course $uneCourse): self
     {
         $this->uneCourse = $uneCourse;
-
-        return $this;
-    }
-
-    public function getLeUser(): ?User
-    {
-        return $this->leUser;
-    }
-
-    public function setLeUser(?User $leUser): self
-    {
-        $this->leUser = $leUser;
 
         return $this;
     }
@@ -92,6 +80,18 @@ class ResultatCourse
     public function setPosition(string $position): self
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    public function getLeUser(): ?User
+    {
+        return $this->leUser;
+    }
+
+    public function setLeUser(?User $leUser): self
+    {
+        $this->leUser = $leUser;
 
         return $this;
     }

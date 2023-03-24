@@ -2,7 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\ResultatCourse;
+use App\Entity\User;
+use App\Entity\Course;
 use App\Repository\CourseRepository;
+use App\Repository\ResultatCourseRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +32,7 @@ class ApiController extends AbstractController
         foreach($lesCourses as $uneCourse)
         {
             $data[] = [
+                'id'        => $uneCourse->getId(),
                 'nomCourse' => $uneCourse->getNomCourse(),
                 'dateCourse' => $uneCourse->getDate()->format('Y-m-d'),
                 'prixCourse' => $uneCourse->getPrix(),
@@ -37,9 +43,21 @@ class ApiController extends AbstractController
         }
         return new JsonResponse($data);
     }
-    #[Route('/courses/listes', name : 'couses_listes')]
-    public function test()
+
+    #[Route('/api/inscription/{id}/{course}', name: 'inscription_course')]
+    public function inscriptionCourse(User $user, Course $course, EntityManagerInterface $manager = null) : Response
     {
-        return $this->render('liste_course/listeCourse.html.twig');
+
+        $resCourse = new ResultatCourse();
+        
+        $resCourse->setLeUser($user);
+
+        $resCourse->setUneCourse($course);
+
+        $manager->persist($resCourse);
+
+        $manager->flush();
+
+        return new JsonResponse('retour');
     }
 }
