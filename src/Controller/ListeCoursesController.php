@@ -11,7 +11,7 @@ class ListeCoursesController extends AbstractController
     #[Route('/liste/course', name: 'app_liste_course')]
     public function index(): Response
     {
-        return $this->render('liste_courses/index.html.twig', [
+        return $this->render('liste_course/index.html.twig', [
             'controller_name' => 'ListeCoursesController',
         ]);
     }

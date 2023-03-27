@@ -1,4 +1,13 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
+{% extends 'base.html.twig' %}
 
-{{ form_end(form) }}
+{# début du bloc body #}
+{% block body %}
+
+<div style="position: absolute; right: 0   ;">
+  <p>Votre nombre de points : <span id="nombre"></span></p>
+</div>
+<div id='liste-recompenses'>
+    {# L'appli Vue.js vivra ici #}
+</div>
+
+{% endblock %}

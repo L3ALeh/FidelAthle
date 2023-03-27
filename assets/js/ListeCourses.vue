@@ -5,7 +5,7 @@
                 <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th v-for="intitule in lesIntitules">{{ intitule.lab }}
+                        <th v-for="intitule in lesIntitules"> {{ intitule.lab }}
                             <a href="#" v-on:click="action(intitule.id)">
                                 <span v-if="intitule.order === 0" class="fa fa-fw fa-sort"></span>
                                 <span v-else-if="intitule.order === 1" class="fa fa-fw fa-sort-up sort-asc"></span>
@@ -22,6 +22,7 @@
                         <td>{{ laCourse.prixCourse }}</td>
                         <td>{{ laCourse.typeCourse }}</td>
                         <td>{{ laCourse.niveauCourse }}</td>
+                        <td><button>S'inscrire</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -39,7 +40,8 @@ export default {
             { lab:'Distance', classe:' ', order:0, sort:'distanceCourse', id:2},
             { lab:'Prix', classe:' ', order:0, sort:'prixCourse', id:3},
             { lab:'Type', classe:' ', order:0, sort:'typeCourse', id:4},
-            { lab:'Niveau', classe:' ', order:0, sort:'niveauCourse', id:5} ],
+            { lab:'Niveau', classe:' ', order:0, sort:'niveauCourse', id:5},
+            { lab:'Inscription', classe:' ', order:0, sort:'niveauCourse', id:6} ],
         }
     },
     methods: {

@@ -10,7 +10,9 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import './styles/app.scss';
 import { createApp } from 'vue';
 import ListeCourses from './js/ListeCourses.vue'
+import ListeRecompenses from './js/ListeRecompenses.vue'
 createApp(ListeCourses).mount('#liste-course')
+createApp(ListeRecompenses).mount('#liste-recompenses')
 import { Tooltip, Toast, Popover } from 'bootstrap';
 // start the Stimulus application
 import './bootstrap';
