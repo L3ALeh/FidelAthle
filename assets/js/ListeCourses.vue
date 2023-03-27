@@ -48,11 +48,12 @@ export default {
     },
     methods: {
         inscription(indexCourse) {
-            fetch("/api/inscription/" + this.userId.id + "/" + indexCourse, {'method':'GET'})
+            fetch("/api/inscription/" + this.userId + "/" + indexCourse, {'method':'GET'})
             .then(response => response.json())
             .then(data => {
                 this.coursesInscrites.push(indexCourse);
             })
+            
         },
         action(index) {
             const intitule = this.lesIntitules[index];
@@ -100,7 +101,17 @@ export default {
     },
     created() {
         const appElement = document.getElementById('liste-course')
-        this.userId = JSON.parse(appElement.getAttribute('data-user'))
+        const userString = appElement.dataset.user
+        this.userId = JSON.parse(userString)
+        console.log(this.userId)
+        fetch("/api/lesCourses/participe/" + this.userId, {'method':'GET'})
+        .then(response => response.json())
+        .then(lesCoursesParticipeesID => {
+            lesCoursesParticipeesID.forEach(laCourse => {
+                this.coursesInscrites.push(laCourse.lesCoursesParticipees)
+            });
+        })
+        console.log(this.coursesInscrites)
         this.miseajour()
         setInterval(() => {
             this.miseajour();

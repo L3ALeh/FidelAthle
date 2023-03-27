@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\ResultatCourseRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,6 +23,22 @@ class ApiController extends AbstractController
             'controller_name' => 'ApiController',
         ]);
     }
+
+    #[Route('/api/lesCourses/participe/{id}', name: 'les_courses_participe')]
+    public function coursesParticipees(User $leUser = null, UserRepository $userRep)
+    {
+        $lesCoursesParticipeesID = [];
+
+        $lesCoursesParticipees = $leUser->getLesResultatsCourses();
+        foreach($lesCoursesParticipees as $uneCourseParticipee){
+            $lesCoursesParticipeesID[] = [
+                'lesCoursesParticipees' => $uneCourseParticipee->getUneCourse()->getId()
+            ];
+        }
+
+        return new JsonResponse($lesCoursesParticipeesID);
+    }
+
     #[Route('/api/lesCourses', name: 'les_courses')]
     public function envoiCourse(CourseRepository $coursesRep)
     {

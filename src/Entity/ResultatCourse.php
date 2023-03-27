@@ -14,9 +14,7 @@ class ResultatCourse
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Course $uneCourse = null;
+
 
     #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $temps = null;
@@ -31,21 +29,13 @@ class ResultatCourse
     #[ORM\JoinColumn(nullable: false)]
     private ?User $leUser = null;
 
+    #[ORM\ManyToOne(inversedBy: 'lesResultatsCourses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Course $uneCourse = null;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUneCourse(): ?Course
-    {
-        return $this->uneCourse;
-    }
-
-    public function setUneCourse(?Course $uneCourse): self
-    {
-        $this->uneCourse = $uneCourse;
-
-        return $this;
     }
 
     public function getTemps(): ?\DateTimeInterface
@@ -92,6 +82,18 @@ class ResultatCourse
     public function setLeUser(?User $leUser): self
     {
         $this->leUser = $leUser;
+
+        return $this;
+    }
+
+    public function getUneCourse(): ?Course
+    {
+        return $this->uneCourse;
+    }
+
+    public function setUneCourse(?Course $uneCourse): self
+    {
+        $this->uneCourse = $uneCourse;
 
         return $this;
     }

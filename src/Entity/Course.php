@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CourseRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,6 +35,14 @@ class Course
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?TypeCourse $unTypeCourse = null;
+
+    #[ORM\OneToMany(mappedBy: 'uneCourse', targetEntity: ResultatCourse::class)]
+    private Collection $lesResultatsCourses;
+
+    public function __construct()
+    {
+        $this->lesResultatsCourses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -107,6 +117,36 @@ class Course
     public function setUnTypeCourse(?TypeCourse $unTypeCourse): self
     {
         $this->unTypeCourse = $unTypeCourse;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ResultatCourse>
+     */
+    public function getLesResultatsCourses(): Collection
+    {
+        return $this->lesResultatsCourses;
+    }
+
+    public function addLesResultatsCourse(ResultatCourse $lesResultatsCourse): self
+    {
+        if (!$this->lesResultatsCourses->contains($lesResultatsCourse)) {
+            $this->lesResultatsCourses->add($lesResultatsCourse);
+            $lesResultatsCourse->setUneCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLesResultatsCourse(ResultatCourse $lesResultatsCourse): self
+    {
+        if ($this->lesResultatsCourses->removeElement($lesResultatsCourse)) {
+            // set the owning side to null (unless already changed)
+            if ($lesResultatsCourse->getUneCourse() === $this) {
+                $lesResultatsCourse->setUneCourse(null);
+            }
+        }
 
         return $this;
     }
