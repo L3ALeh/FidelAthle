@@ -172,7 +172,6 @@ export default {
 }
 
 input[type=range] {
-  -webkit-appearance: none;
   width: 100%;
   height: 10px;
   border-radius: 5px;
