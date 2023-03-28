@@ -7,8 +7,8 @@ use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\ResultatCourseRepository;
-use App\Repository\RecompenseRepository;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,10 +40,18 @@ class ApiController extends AbstractController
         return new JsonResponse($lesCoursesParticipeesID);
     }
 
-    #[Route('/api/lesCourses', name: 'les_courses')]
-    public function envoiCourse(CourseRepository $coursesRep)
+    #[Route('/api/lesCourses/{value}/{id}', name: 'les_courses')]
+    public function envoiCourse(CourseRepository $coursesRep, string $value, User $user = null)
     {
-        $lesCourses = $coursesRep->findAll();
+        $date = new DateTime();
+        
+        if($value == '1')
+        {
+            $lesCourses = $coursesRep->findByDateAndUser($date, $user);
+        }
+        else{
+            $lesCourses = $coursesRep->findByDate($date);
+        }
 
         $data = [];
 
