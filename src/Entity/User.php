@@ -50,6 +50,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->lesPoints = new ArrayCollection();
     }
+    #[ORM\OneToMany(mappedBy: 'leUser', targetEntity: ResultatCourse::class)]
+    private Collection $lesResultatsCourses;
+
+    public function __construct()
+    {
+        $this->lesResultatsCourses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -183,6 +190,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->lesPoints->add($lesPoint);
             $lesPoint->setLeUser($this);
         }
+    }
+     /** 
+     * @return Collection<int, ResultatCourse>
+     */
+    public function getLesResultatsCourses(): Collection
+    {
+        return $this->lesResultatsCourses;
+    }
+
+    public function addLesResultatsCourse(ResultatCourse $lesResultatsCourse): self
+    {
+        if (!$this->lesResultatsCourses->contains($lesResultatsCourse)) {
+            $this->lesResultatsCourses->add($lesResultatsCourse);
+            $lesResultatsCourse->setLeUser($this);
+        }
 
         return $this;
     }
@@ -193,6 +215,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($lesPoint->getLeUser() === $this) {
                 $lesPoint->setLeUser(null);
+            }
+        }
+    }    
+    public function removeLesResultatsCourse(ResultatCourse $lesResultatsCourse): self
+    {
+        if ($this->lesResultatsCourses->removeElement($lesResultatsCourse)) {
+            // set the owning side to null (unless already changed)
+            if ($lesResultatsCourse->getLeUser() === $this) {
+                $lesResultatsCourse->setLeUser(null);
             }
         }
 

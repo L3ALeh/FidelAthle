@@ -15,4 +15,9 @@ class ListeCoursesController extends AbstractController
             'controller_name' => 'ListeCoursesController',
         ]);
     }
+    #[Route('/courses/listes', name : 'couses_listes')]
+    public function test()
+    {
+        return $this->render('liste_course/listeCourse.html.twig');
+    }
 }
