@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Repository\PointRepository;
+use App\Repository\RecompenseRepository;
 use App\Entity\ResultatCourse;
 use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\ResultatCourseRepository;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,10 +42,18 @@ class ApiController extends AbstractController
         return new JsonResponse($lesCoursesParticipeesID);
     }
 
-    #[Route('/api/lesCourses', name: 'les_courses')]
-    public function envoiCourse(CourseRepository $coursesRep)
+    #[Route('/api/lesCourses/{value}/{id}', name: 'les_courses')]
+    public function envoiCourse(CourseRepository $coursesRep, string $value, User $user = null)
     {
-        $lesCourses = $coursesRep->findAll();
+        $date = new DateTime();
+        
+        if($value == '1')
+        {
+            $lesCourses = $coursesRep->findByDateAndUser($date, $user);
+        }
+        else{
+            $lesCourses = $coursesRep->findByDate($date);
+        }
 
         $data = [];
 
@@ -77,4 +88,51 @@ class ApiController extends AbstractController
 
         return new JsonResponse('retour');
     }
+
+
+    #[Route('/api/lesRecompenses', name: 'recompensesaffichees')]
+
+    public function GestionRecompenses(RecompenseRepository $uneRecompense)
+    {
+        $lesRecompenses = $uneRecompense->findAll();
+        $data = [];
+        
+        foreach($lesRecompenses as $uneRecompense)
+        {
+            $data[]=[
+                'label'=> $uneRecompense->getLabel(),
+                'valeur'=> $uneRecompense->getValeur(),
+                'valeurPoints'=> $uneRecompense->getValeurPoints()
+            ];
+        }
+        return new JsonResponse($data);
+    }
+
+    #[Route('/voirRecompenses', name : 'rec')]
+    public function RECOMP()
+    {
+        return $this->render('gestion_recompenses/recompenses.html.twig');
+    }
+
+    #[Route('/api/lesPoints/{id}', name: 'pointsnnn')]
+
+    public function GestionPoints(PointRepository $unPoint, User $leUser = null)
+    {
+        $lesPoints = $unPoint->find($leUser);
+        $data = [];
+        
+        foreach($lesPoints as $unPoint)
+        {
+            $data[]=[
+                'nombre'=> $unPoint->getNombre(),
+            ];
+        }
+        return new JsonResponse($data);
+    }
+    #[Route('/voirRecompenses', name : 'rec')]
+    public function recompoint()
+    {
+        return $this->render('gestion_recompenses/recompenses.html.twig');
+    }
+
 }

@@ -13,9 +13,7 @@ class Point
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $leUser = null;
+
 
     #[ORM\ManyToOne]
     private ?Recompense $laRecompense = null;
@@ -23,22 +21,15 @@ class Point
     #[ORM\Column]
     private ?int $nombre = null;
 
+    #[ORM\ManyToOne(inversedBy: 'lesPoints')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $leUser = null;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getLeUser(): ?User
-    {
-        return $this->leUser;
-    }
-
-    public function setLeUser(?User $leUser): self
-    {
-        $this->leUser = $leUser;
-
-        return $this;
-    }
 
     public function getLaRecompense(): ?Recompense
     {
@@ -61,6 +52,17 @@ class Point
     {
         $this->nombre = $nombre;
 
+        return $this;
+    }
+
+    public function getLeUser(): ?User
+    {
+        return $this->leUser;
+    }
+
+    public function setLeUser(?User $leUser): self
+    {
+        $this->leUser = $leUser;
         return $this;
     }
 }

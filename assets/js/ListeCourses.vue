@@ -23,7 +23,7 @@
                 <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th v-for="intitule in lesIntitules"> {{ intitule.lab }}
+                        <th v-for="intitule in lesIntitules.slice(0, sliceValue)"> {{ intitule.lab }} 
                             <a href="#" v-on:click="action(intitule.id)">
                                 <span v-if="intitule.order === 0" class="fa fa-fw fa-sort"></span>
                                 <span v-else-if="intitule.order === 1" class="fa fa-fw fa-sort-up sort-asc"></span>
@@ -34,13 +34,14 @@
                 </thead>
                 <tbody>
                     <tr v-for="laCourse in lesCourses"> 
-                        <td>{{ laCourse.nomCourse }}</td>
+                        <td v-if="this.lesIntitules[6].visible==true">{{ laCourse.nomCourse }}</td>
+                        <td v-else><a id="nomCourse">{{ laCourse.nomCourse }}</a></td>
                         <td>{{ laCourse.dateCourse }}</td>
                         <td>{{ laCourse.distanceCourse }}</td>
-                        <td>{{ laCourse.prixCourse }}</td>
+                        <td>{{ laCourse.prixCourse }} €</td>
                         <td>{{ laCourse.typeCourse }}</td>
                         <td>{{ laCourse.niveauCourse }}</td>
-                        <td>
+                        <td v-if="this.lesIntitules[6].visible==true">
                             <button :disabled="coursesInscrites.indexOf(laCourse.id) !== -1"
                             :class="{'disabled-button': coursesInscrites.indexOf(laCourse.id) !== -1}" v-on:click="inscription(laCourse.id)">
                                 <span v-if="coursesInscrites.indexOf(laCourse.id) !== -1">Validée</span>
@@ -55,18 +56,21 @@
 </template>
 
 <script>
+
 export default {
     data() {
         return {
+            dataString : null,
             userId : null,
+            sliceValue : null,
             lesCourses : null,
-            lesIntitules : [ {lab:'Nom', classe:' ', order:0, sort:'nomCourse', id:0},
-            { lab:'Date', classe:' ', order:0, sort:'dateCourse', id:1},
-            { lab:'Distance', classe:' ', order:0, sort:'distanceCourse', id:2},
-            { lab:'Prix', classe:' ', order:0, sort:'prixCourse', id:3},
-            { lab:'Type', classe:' ', order:0, sort:'typeCourse', id:4},
-            { lab:'Niveau', classe:' ', order:0, sort:'niveauCourse', id:5},
-            { lab:'Inscription', classe:' ', order:0, sort:'niveauCourse', id:6} ],
+            lesIntitules : [ {lab:'Nom', classe:' ', order:0, sort:'nomCourse', id:0, visible:true},
+            { lab:'Date', classe:' ', order:0, sort:'dateCourse', id:1, visible:true},
+            { lab:'Distance', classe:' ', order:0, sort:'distanceCourse', id:2, visible:true},
+            { lab:'Prix', classe:' ', order:0, sort:'prixCourse', id:3, visible:true},
+            { lab:'Type', classe:' ', order:0, sort:'typeCourse', id:4, visible:true},
+            { lab:'Niveau', classe:' ', order:0, sort:'niveauCourse', id:5, visible:true},
+            { lab:'Inscription', classe:' ', order:0, sort:'niveauCourse', id:6, visible:true} ],
             coursesInscrites : []
         }
     },
@@ -88,7 +92,6 @@ export default {
             const intitule = this.lesIntitules[index];
             this.lesIntitules.forEach((item, i) => {
                 if (i !== index) {
-                    console.log(index)
                     item.classe = '';
                     item.order = 0;
                 }
@@ -121,7 +124,7 @@ export default {
             }); 
         },
         miseajour() {
-            fetch('/api/lesCourses')
+            fetch('/api/lesCourses/' + this.dataString + "/" + this.userId)
             .then(response => response.json())
             .then(data => {
                 this.lesCourses = data;
@@ -130,9 +133,19 @@ export default {
     },
     created() {
         const appElement = document.getElementById('liste-course')
+        const dataString = appElement.getAttribute('data')
+        this.dataString = dataString
+        if(dataString == '1'){
+          this.lesIntitules[6].visible = false
+          this.sliceValue = 6
+        }
+        else{
+          this.lesIntitules[6].visible = true
+          this.sliceValue = 7
+        }
+        console.log(this.lesIntitules[6])
         const userString = appElement.dataset.user
         this.userId = JSON.parse(userString)
-        console.log(this.userId)
         fetch("/api/lesCourses/participe/" + this.userId, {'method':'GET'})
         .then(response => response.json())
         .then(lesCoursesParticipeesID => {
@@ -140,7 +153,6 @@ export default {
                 this.coursesInscrites.push(laCourse.lesCoursesParticipees)
             });
         })
-        console.log(this.coursesInscrites)
         this.miseajour()
         setInterval(() => {
             this.miseajour();

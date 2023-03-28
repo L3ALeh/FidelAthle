@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Course;
+use App\Entity\User;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpParser\Node\Expr\Cast\Array_;
 
 /**
  * @extends ServiceEntityRepository<Course>
@@ -37,6 +40,30 @@ class CourseRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findByDateAndUser(DateTime $date, User $leUser) : array
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.lesResultatsCourses', 'rc')
+            ->join('rc.leUser', 'u')
+            ->where('c.date < :value')
+            ->andWhere('rc.leUser = :leUser')
+            ->setParameter('value', $date)
+            ->setParameter('leUser', $leUser)
+            ->orderBy('c.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByDate(DateTime $date) : array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.date >= :value')
+            ->setParameter('value', $date)
+            ->orderBy('c.date', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

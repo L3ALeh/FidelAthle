@@ -2,7 +2,7 @@
 
 {# début du bloc body #}
 {% block body %}
-<div id='liste-course' data-user="{{ app.user.id|json_encode() }}">
+<div id='liste-course' data="{{ historique }}" data-user="{{ app.user.id|json_encode() }}">
     {# L'appli Vue.js vivra ici #}
 </div>
 

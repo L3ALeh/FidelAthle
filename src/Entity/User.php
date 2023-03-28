@@ -12,6 +12,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+/**
+ * Summary of User
+ */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -43,12 +46,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
+    #[ORM\OneToMany(mappedBy: 'leUser', targetEntity: Point::class)]
+    private Collection $lesPoints;
+    
     #[ORM\OneToMany(mappedBy: 'leUser', targetEntity: ResultatCourse::class)]
     private Collection $lesResultatsCourses;
 
     public function __construct()
     {
         $this->lesResultatsCourses = new ArrayCollection();
+        $this->lesPoints = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -170,6 +177,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
+     * @return Collection<int, Point>
+     */
+    public function getLesPoints(): Collection
+    {
+        return $this->lesPoints;
+    }
+
+
+    public function addLesPoint(Point $lesPoint): self
+    {
+        if (!$this->lesPoints->contains($lesPoint)) {
+            $this->lesPoints->add($lesPoint);
+            $lesPoint->setLeUser($this);
+        }
+        return $this;
+    }
+     /** 
      * @return Collection<int, ResultatCourse>
      */
     public function getLesResultatsCourses(): Collection
@@ -187,6 +211,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function removeLesPoint(Point $lesPoint): self
+    {
+        if ($this->lesPoints->removeElement($lesPoint)) {
+            // set the owning side to null (unless already changed)
+            if ($lesPoint->getLeUser() === $this) {
+                $lesPoint->setLeUser(null);
+            }
+        }
+        return $this;
+    }    
     public function removeLesResultatsCourse(ResultatCourse $lesResultatsCourse): self
     {
         if ($this->lesResultatsCourses->removeElement($lesResultatsCourse)) {
