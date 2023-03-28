@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\RecompenseRepository;
 use App\Entity\ResultatCourse;
 use App\Entity\User;
 use App\Entity\Course;
@@ -100,12 +99,12 @@ class ApiController extends AbstractController
     }
 
     #[Route('/voirRecompenses', name : 'rec')]
-    public function RECOMP()
+    public function recompoints()
     {
         return $this->render('gestion_recompenses/recompenses.html.twig');
     }
 
-    #[Route('/api/lesPoints/{id}', name: 'pointsnnn')]
+    #[Route('/api/lesPoints/{id}', name: 'points')]
 
     public function GestionPoints(PointRepository $unPoint, User $leUser = null)
     {
@@ -115,6 +114,7 @@ class ApiController extends AbstractController
         foreach($lesPoints as $unPoint)
         {
             $data[]=[
+                'id'=> $unPoint-> getId(),
                 'nombre'=> $unPoint->getNombre(),
             ];
         }
@@ -124,6 +124,15 @@ class ApiController extends AbstractController
     public function recompoint()
     {
         return $this->render('gestion_recompenses/recompenses.html.twig');
+    }
+
+
+    #[Route('/api/recuppoints/{id}', name: 'recup_points')]
+    public function recuppoints(User $user)
+    {
+        $lesPoints = $user->getNombreDePoints();
+
+        return new JsonResponse($lesPoints);
     }
 
 }

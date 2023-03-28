@@ -27,8 +27,9 @@ class RegistrationController extends AbstractController
                 $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
-                )
-            );
+                ))
+                ->setNombreDePoints('0');
+            
 
             $entityManager->persist($user);
             $entityManager->flush();
