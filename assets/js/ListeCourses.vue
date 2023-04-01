@@ -6,8 +6,8 @@
                     <div class="dropdown">
                     <button class="dropbtn">Filtre &#x25BC;</button>
                         <div class="dropdown-content">
-                            <label><input :on-click="filtre(value)" type="checkbox" name="filter" value="dateCourse">Date</label>
-                            <label><input :on-click="filtre(value)" type="checkbox" name="filter" value="distanceCourse">Distance</label>
+                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="dateCourse">Date</label>
+                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="distanceCourse">Distance</label>
                             <div class="price-filter">
                             <label for="price-range">Prix :</label>
                             <input type="range" id="price-range" min="0" max="1000" step="10" value="500">
@@ -16,7 +16,7 @@
                                 <span>1000 €</span>
                             </div>
                             </div>
-                            <label><input :on-click="filtre(value)" type="checkbox" name="filter" value="estInscrit">Déjà inscrits</label>
+                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="estInscrit">Déjà inscrits</label>
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,17 @@
                 <tbody>
                     <tr v-for="laCourse in lesCourses"> 
                         <td v-if="this.lesIntitules[6].visible==true">{{ laCourse.nomCourse }}</td>
-                        <td v-else><a id="nomCourse">{{ laCourse.nomCourse }}</a></td>
+                        <td v-else>
+                          <div class="dropdown" @mouseover="showDropdown = true" @mouseleave="showDropdown = false">
+                            <a>{{ laCourse.nomCourse }}</a>
+                            <div class="dropdown-menu" v-if="showDropdown">
+                              <p>test12</p>
+                              <p>test12</p>
+                              <p>test12</p>
+                              <p>test12</p>
+                            </div>
+                          </div>
+                        </td>
                         <td>{{ laCourse.dateCourse }}</td>
                         <td>{{ laCourse.distanceCourse }}</td>
                         <td>{{ laCourse.prixCourse }} €</td>
@@ -62,6 +72,7 @@ export default {
         return {
             dataString : null,
             userId : null,
+            showDropdown : false,
             sliceValue : null,
             lesCourses : null,
             lesIntitules : [ {lab:'Nom', classe:' ', order:0, sort:'nomCourse', id:0, visible:true},
@@ -143,7 +154,6 @@ export default {
           this.lesIntitules[6].visible = true
           this.sliceValue = 7
         }
-        console.log(this.lesIntitules[6])
         const userString = appElement.dataset.user
         this.userId = JSON.parse(userString)
         fetch("/api/lesCourses/participe/" + this.userId, {'method':'GET'})
