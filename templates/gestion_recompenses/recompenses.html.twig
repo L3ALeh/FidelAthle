@@ -2,11 +2,7 @@
 
 {# début du bloc body #}
 {% block body %}
-
-<div style="position: absolute; right: 0   ;">
-  <p>Votre nombre de points : <span id="nombre"></span></p>
-</div>
-<div id='liste-recompenses'>
+<div id='liste-recompenses' data-user="{{ app.user.id|json_encode() }}">
     {# L'appli Vue.js vivra ici #}
 </div>
 

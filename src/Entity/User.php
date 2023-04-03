@@ -46,16 +46,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
-    #[ORM\OneToMany(mappedBy: 'leUser', targetEntity: Point::class)]
-    private Collection $lesPoints;
-    
     #[ORM\OneToMany(mappedBy: 'leUser', targetEntity: ResultatCourse::class)]
     private Collection $lesResultatsCourses;
+
+    #[ORM\ManyToMany(targetEntity: Recompense::class, inversedBy: 'lesUsers')]
+    private Collection $lesRecompenses;
+
+    #[ORM\Column]
+    private ?int $nombreDePoints = null;
 
     public function __construct()
     {
         $this->lesResultatsCourses = new ArrayCollection();
-        $this->lesPoints = new ArrayCollection();
+        $this->lesRecompenses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,23 +179,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Point>
-     */
-    public function getLesPoints(): Collection
-    {
-        return $this->lesPoints;
-    }
-
-
-    public function addLesPoint(Point $lesPoint): self
-    {
-        if (!$this->lesPoints->contains($lesPoint)) {
-            $this->lesPoints->add($lesPoint);
-            $lesPoint->setLeUser($this);
-        }
-        return $this;
-    }
      /** 
      * @return Collection<int, ResultatCourse>
      */
@@ -229,6 +215,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $lesResultatsCourse->setLeUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Recompense>
+     */
+    public function getLesRecompenses(): Collection
+    {
+        return $this->lesRecompenses;
+    }
+
+    public function addLesRecompense(Recompense $lesRecompense): self
+    {
+        if (!$this->lesRecompenses->contains($lesRecompense)) {
+            $this->lesRecompenses->add($lesRecompense);
+        }
+
+        return $this;
+    }
+
+    public function removeLesRecompense(Recompense $lesRecompense): self
+    {
+        $this->lesRecompenses->removeElement($lesRecompense);
+
+        return $this;
+    }
+
+    public function getNombreDePoints(): ?int
+    {
+        return $this->nombreDePoints;
+    }
+
+    public function setNombreDePoints(int $nombreDePoints): self
+    {
+        $this->nombreDePoints = $nombreDePoints;
 
         return $this;
     }
