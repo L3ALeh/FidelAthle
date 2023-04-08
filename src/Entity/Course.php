@@ -129,6 +129,18 @@ class Course
         return $this->lesResultatsCourses;
     }
 
+    public function getLesResultatsCoursesByID(User $idUser)
+    {
+       foreach($this->lesResultatsCourses as $resCourse)
+       {
+            if($resCourse->getLeUser() == $idUser)
+            {
+                return $resCourse;
+            }
+       }
+       return null;
+    }
+
     public function addLesResultatsCourse(ResultatCourse $lesResultatsCourse): self
     {
         if (!$this->lesResultatsCourses->contains($lesResultatsCourse)) {
