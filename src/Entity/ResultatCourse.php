@@ -14,10 +14,8 @@ class ResultatCourse
     #[ORM\Column]
     private ?int $id = null;
 
-
-
-    #[ORM\Column(type: Types::TIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $temps = null;
+    #[ORM\Column(nullable: true)]
+    private ?string $temps = null;
 
     #[ORM\Column (nullable: true)]
     private ?float $vitesseMoyenne = null;
@@ -38,12 +36,12 @@ class ResultatCourse
         return $this->id;
     }
 
-    public function getTemps(): ?\DateTimeInterface
+    public function getTemps(): ?string
     {
         return $this->temps;
     }
 
-    public function setTemps(\DateTimeInterface $temps): self
+    public function setTemps(string $temps): self
     {
         $this->temps = $temps;
 

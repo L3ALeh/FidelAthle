@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\RecompenseRepository;
+use App\Repository\ResultatCourseRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,6 +41,46 @@ class ApiController extends AbstractController
         return new JsonResponse($lesCoursesParticipeesID);
     }
 
+    #[Route('/api/coursesOrganisees/{id}', name: 'les_coureurs')]
+    public function coursesOrganisees(CourseRepository $courses, User $idUser)
+    {
+        if($idUser->isEstOrganisateur())
+        {
+            $lesCourses = $courses->findBy(array('unOrganisateur' => $idUser));
+            $data = [];
+            foreach($lesCourses as $uneCourse)
+            {
+                $data[] = [
+                    'id'        => $uneCourse->getId(),
+                    'nomCourse' => $uneCourse->getNomCourse(),
+                    'dateCourse' => $uneCourse->getDate()->format('Y-m-d')
+                ];
+            }
+            return $data;
+        }
+        else{
+            return null;
+        }
+    }
+
+    #[Route('/api/lesCoureurs/{id}', name: 'les_coureurs')]
+    public function coureursResultats(ResultatCourseRepository $coursesRep, Course $laCourse)
+    {
+        $lesResultats = $coursesRep->findOneBy(array('uneCourse' => $laCourse));
+        $data = [];
+        foreach($lesResultats as $unResultat)
+        {
+            $data[] = [
+                'coureur' => $unResultat->getLeUser()->getNom() + ' ' + $unResultat->getLeUser()->getPrenom(),
+                'classement' => $unResultat->getPosition(),
+                'temps' => $unResultat->getTemps(),
+                'moyenne' => $unResultat->getVitesseMoyenne()
+            ];
+        }
+        return $data;
+
+    }
+
     #[Route('/api/lesCourses/{value}/{id}', name: 'les_courses')]
     public function envoiCourse(CourseRepository $coursesRep, string $value, User $user = null)
     {
@@ -69,7 +110,7 @@ class ApiController extends AbstractController
                 'niveauCourse' => $uneCourse->getUnNiveauCourse()->getLabel(),
                 'position' => $uneCourse->getLesResultatsCoursesByID($user)->getPosition(),
                 'moyenne'  => $uneCourse->getLesResultatsCoursesByID($user)->getVitesseMoyenne(),
-                'temps'    => $uneCourse->getLesResultatsCoursesByID($user)->getTemps()['date']
+                'temps'    => $uneCourse->getLesResultatsCoursesByID($user)->getTemps()
                 ];
             }
             else{

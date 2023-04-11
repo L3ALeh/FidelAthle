@@ -28,7 +28,8 @@ class RegistrationController extends AbstractController
                     $user,
                     $form->get('plainPassword')->getData()
                 ))
-                ->setNombreDePoints('0');
+                ->setNombreDePoints('0')
+                ->setEstOrganisateur(false);
             
 
             $entityManager->persist($user);

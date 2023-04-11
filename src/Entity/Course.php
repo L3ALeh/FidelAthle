@@ -39,6 +39,10 @@ class Course
     #[ORM\OneToMany(mappedBy: 'uneCourse', targetEntity: ResultatCourse::class)]
     private Collection $lesResultatsCourses;
 
+    #[ORM\ManyToOne(inversedBy: 'lesCoursesOrganisees')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $unOrganisateur = null;
+
     public function __construct()
     {
         $this->lesResultatsCourses = new ArrayCollection();
@@ -159,6 +163,18 @@ class Course
                 $lesResultatsCourse->setUneCourse(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUnOrganisateur(): ?User
+    {
+        return $this->unOrganisateur;
+    }
+
+    public function setUnOrganisateur(?User $unOrganisateur): self
+    {
+        $this->unOrganisateur = $unOrganisateur;
 
         return $this;
     }
