@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\ResultatCourseRepository;
+use App\Repository\RecompenseRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -92,15 +93,16 @@ class ApiController extends AbstractController
 
     public function GestionRecompenses(RecompenseRepository $uneRecompense)
     {
+
         $lesRecompenses = $uneRecompense->findAll();
         $data = [];
         
-        foreach($lesRecompenses as $uneRecompense)
+        foreach($lesRecompenses as $uneRec)
         {
             $data[]=[
-                'label'=> $uneRecompense->getLabel(),
-                'valeur'=> $uneRecompense->getValeur(),
-                'valeurPoints'=> $uneRecompense->getValeurPoints()
+                'label'=> $uneRec->getLabel(),
+                'valeur'=> $uneRec->getValeur(),
+                'valeurPoints'=> $uneRec->getValeurPoints()
             ];
         }
         return new JsonResponse($data);
@@ -141,6 +143,12 @@ class ApiController extends AbstractController
         $lesPoints = $user->getNombreDePoints();
 
         return new JsonResponse($lesPoints);
+    }
+
+    #[Route('/home', name: 'HomeMenu')]
+    public function Menu()
+    {
+        return $this ->render('home_menu/homeMenu.html.twig');
     }
 
 }

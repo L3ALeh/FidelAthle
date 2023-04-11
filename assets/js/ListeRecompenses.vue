@@ -18,8 +18,9 @@
                 <tbody>
                     <tr v-for="laRecompense in lesRecompenses"> 
                         <td>{{ laRecompense.label }}</td>
-                        <td>{{ laRecompense.valeur }}</td>
+                        <td>{{ laRecompense.valeur }} €</td>
                         <td>{{ laRecompense.valeurPoints }}</td>
+                        <td><button v-if="totalPoints >= laRecompense.valeurPoints">Obtenir</button><button v-else disabled>Pas assez de points</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -36,7 +37,8 @@ export default {
             lesRecompenses : null,
             lesIntitules : [ {lab:'Label', classe:' ', order:0, sort:'Label', id:0},
             { lab:'Valeur', classe:' ', order:0, sort:'Prix', id:1},
-            {lab:'Valeur Points', classe:' ', order:0,sort:'Valeur', id:2}]
+            {lab:'Valeur Points', classe:' ', order:0,sort:'Valeur', id:2}, 
+            {lab:'Obtenir', classe:' ', order:0,sort:'Valeur', id:3}]
         }
     },
     methods: {
@@ -46,6 +48,7 @@ export default {
             .then(data => {
                 this.lesRecompenses = data;
             })
+            console.log(this.lesRecompenses)
 
 
             fetch('/api/recuppoints/' + this.userId)
@@ -66,3 +69,9 @@ export default {
     }
 }
 </script>
+
+<style>
+button:disabled:hover{
+    cursor: not-allowed;
+}
+</style>
