@@ -6,8 +6,8 @@
                     <div class="dropdown">
                     <button class="dropbtn">Filtre &#x25BC;</button>
                         <div class="dropdown-content">
-                            <label><input :on-click="filtre(value)" type="checkbox" name="filter" value="dateCourse">Date</label>
-                            <label><input :on-click="filtre(value)" type="checkbox" name="filter" value="distanceCourse">Distance</label>
+                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="dateCourse">Date</label>
+                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="distanceCourse">Distance</label>
                             <div class="price-filter">
                             <label for="price-range">Prix :</label>
                             <input type="range" id="price-range" min="0" max="1000" step="10" value="500">
@@ -16,7 +16,7 @@
                                 <span>1000 €</span>
                             </div>
                             </div>
-                            <label><input :on-click="filtre(value)" type="checkbox" name="filter" value="estInscrit">Déjà inscrits</label>
+                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="estInscrit">Déjà inscrits</label>
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,15 @@
                 <tbody>
                     <tr v-for="laCourse in lesCourses"> 
                         <td v-if="this.lesIntitules[6].visible==true">{{ laCourse.nomCourse }}</td>
-                        <td v-else><a id="nomCourse">{{ laCourse.nomCourse }}</a></td>
+                        <div v-else class="dropdown" @mouseover="showDropdown = true" @mouseleave="showDropdown = false">
+                          <a>{{ laCourse.nomCourse }}</a>
+                          <div class="dropdown-menu" v-if="showDropdown">
+                            <p>Classement : {{ laCourse.position }} / </p>
+                            <p>Moyenne : {{ laCourse.moyenne }} km/h </p>
+                            <p>Temps : {{ laCourse.temps }}</p>
+                            <p>test12</p>
+                          </div>
+                        </div>
                         <td>{{ laCourse.dateCourse }}</td>
                         <td>{{ laCourse.distanceCourse }}</td>
                         <td>{{ laCourse.prixCourse }} €</td>
@@ -62,6 +70,7 @@ export default {
         return {
             dataString : null,
             userId : null,
+            showDropdown : false,
             sliceValue : null,
             lesCourses : null,
             lesIntitules : [ {lab:'Nom', classe:' ', order:0, sort:'nomCourse', id:0, visible:true},
@@ -143,7 +152,6 @@ export default {
           this.lesIntitules[6].visible = true
           this.sliceValue = 7
         }
-        console.log(this.lesIntitules[6])
         const userString = appElement.dataset.user
         this.userId = JSON.parse(userString)
         fetch("/api/lesCourses/participe/" + this.userId, {'method':'GET'})
@@ -246,29 +254,30 @@ input[type="checkbox"]:checked::before {
   cursor: pointer;
 }
 
-/* Style pour la flèche du menu déroulant au survol */
-.filter-arrow:hover .dropdown-menu {
-  border-radius: 8px;
-}
 
-/* Style pour le carré du menu déroulant */
 .dropdown-menu {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 9999;
+  z-index: 1000;
   display: none;
-  padding: 8px;
-  border: 1px solid #ccc;
+  float: left;
+  min-width: 72.5rem;
+  padding: 0.5rem 0;
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
   background-color: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
 }
 
-/* Style pour afficher le menu déroulant au clic */
-.dropdown-menu.is-open {
+.dropdown:hover .dropdown-menu {
   display: block;
 }
+
 
 /* Style pour la checkbox non cochée */
 input[type="checkbox"]::before {
@@ -299,10 +308,6 @@ input[type="checkbox"] + label {
   position: relative;
   background-color: #034892;
   color: white;
-}
-
-.dropdown {
-  display: inline-block;
 }
 
 .dropbtn {

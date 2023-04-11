@@ -6,6 +6,7 @@ use App\Entity\ResultatCourse;
 use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
+use App\Repository\RecompenseRepository;
 use App\Repository\ResultatCourseRepository;
 use App\Repository\RecompenseRepository;
 use App\Repository\UserRepository;
@@ -41,6 +42,46 @@ class ApiController extends AbstractController
         return new JsonResponse($lesCoursesParticipeesID);
     }
 
+    #[Route('/api/coursesOrganisees/{id}', name: 'les_coureurs')]
+    public function coursesOrganisees(CourseRepository $courses, User $idUser)
+    {
+        if($idUser->isEstOrganisateur())
+        {
+            $lesCourses = $courses->findBy(array('unOrganisateur' => $idUser));
+            $data = [];
+            foreach($lesCourses as $uneCourse)
+            {
+                $data[] = [
+                    'id'        => $uneCourse->getId(),
+                    'nomCourse' => $uneCourse->getNomCourse(),
+                    'dateCourse' => $uneCourse->getDate()->format('Y-m-d')
+                ];
+            }
+            return $data;
+        }
+        else{
+            return null;
+        }
+    }
+
+    #[Route('/api/lesCoureurs/{id}', name: 'les_coureurs')]
+    public function coureursResultats(ResultatCourseRepository $coursesRep, Course $laCourse)
+    {
+        $lesResultats = $coursesRep->findOneBy(array('uneCourse' => $laCourse));
+        $data = [];
+        foreach($lesResultats as $unResultat)
+        {
+            $data[] = [
+                'coureur' => $unResultat->getLeUser()->getNom() + ' ' + $unResultat->getLeUser()->getPrenom(),
+                'classement' => $unResultat->getPosition(),
+                'temps' => $unResultat->getTemps(),
+                'moyenne' => $unResultat->getVitesseMoyenne()
+            ];
+        }
+        return $data;
+
+    }
+
     #[Route('/api/lesCourses/{value}/{id}', name: 'les_courses')]
     public function envoiCourse(CourseRepository $coursesRep, string $value, User $user = null)
     {
@@ -58,15 +99,32 @@ class ApiController extends AbstractController
 
         foreach($lesCourses as $uneCourse)
         {
-            $data[] = [
+            if($value == '1')
+            {
+                $data[] = [
                 'id'        => $uneCourse->getId(),
                 'nomCourse' => $uneCourse->getNomCourse(),
                 'dateCourse' => $uneCourse->getDate()->format('Y-m-d'),
                 'prixCourse' => $uneCourse->getPrix(),
                 'distanceCourse' => $uneCourse->getDistance(),
                 'typeCourse' => $uneCourse->getUnTypeCourse()->getLabel(),
-                'niveauCourse' => $uneCourse->getUnNiveauCourse()->getLabel()
-            ];
+                'niveauCourse' => $uneCourse->getUnNiveauCourse()->getLabel(),
+                'position' => $uneCourse->getLesResultatsCoursesByID($user)->getPosition(),
+                'moyenne'  => $uneCourse->getLesResultatsCoursesByID($user)->getVitesseMoyenne(),
+                'temps'    => $uneCourse->getLesResultatsCoursesByID($user)->getTemps()
+                ];
+            }
+            else{
+                $data[] = [
+                    'id'        => $uneCourse->getId(),
+                    'nomCourse' => $uneCourse->getNomCourse(),
+                    'dateCourse' => $uneCourse->getDate()->format('Y-m-d'),
+                    'prixCourse' => $uneCourse->getPrix(),
+                    'distanceCourse' => $uneCourse->getDistance(),
+                    'typeCourse' => $uneCourse->getUnTypeCourse()->getLabel(),
+                    'niveauCourse' => $uneCourse->getUnNiveauCourse()->getLabel()
+                ];
+            }
         }
         return new JsonResponse($data);
     }
@@ -110,28 +168,6 @@ class ApiController extends AbstractController
 
     #[Route('/voirRecompenses', name : 'rec')]
     public function recompoints()
-    {
-        return $this->render('gestion_recompenses/recompenses.html.twig');
-    }
-
-    #[Route('/api/lesPoints/{id}', name: 'points')]
-
-    public function GestionPoints(PointRepository $unPoint, User $leUser = null)
-    {
-        $lesPoints = $unPoint->find($leUser);
-        $data = [];
-        
-        foreach($lesPoints as $unPoint)
-        {
-            $data[]=[
-                'id'=> $unPoint-> getId(),
-                'nombre'=> $unPoint->getNombre(),
-            ];
-        }
-        return new JsonResponse($data);
-    }
-    #[Route('/voirRecompenses', name : 'rec')]
-    public function recompoint()
     {
         return $this->render('gestion_recompenses/recompenses.html.twig');
     }

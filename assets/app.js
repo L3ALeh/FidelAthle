@@ -16,6 +16,8 @@ import './bootstrap';
 import Bouton from './js/components/bouton.vue'
 import ListeRecompenses from './js/ListeRecompenses.vue'
 import BouttonCourses from './js/components/bouttonCourses.vue'
+import Result from './js/Resultat.vue'
+createApp(Result).mount('#result-course')
 createApp(HistoriqueDesCourses).mount('#historique-course')
 createApp(BouttonCourses).mount('#bouton-courses')
 createApp(ListeCourses).mount('#liste-course')

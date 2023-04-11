@@ -55,10 +55,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $nombreDePoints = null;
 
+    #[ORM\Column]
+    private ?bool $estOrganisateur = null;
+
+    #[ORM\OneToMany(mappedBy: 'unOrganisateur', targetEntity: Course::class)]
+    private Collection $lesCoursesOrganisees;
+
     public function __construct()
     {
         $this->lesResultatsCourses = new ArrayCollection();
         $this->lesRecompenses = new ArrayCollection();
+        $this->lesCoursesOrganisees = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,17 +203,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-    public function removeLesPoint(Point $lesPoint): self
-    {
-        if ($this->lesPoints->removeElement($lesPoint)) {
-            // set the owning side to null (unless already changed)
-            if ($lesPoint->getLeUser() === $this) {
-                $lesPoint->setLeUser(null);
-            }
-        }
-        return $this;
-    }    
+   
     public function removeLesResultatsCourse(ResultatCourse $lesResultatsCourse): self
     {
         if ($this->lesResultatsCourses->removeElement($lesResultatsCourse)) {
@@ -251,6 +248,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNombreDePoints(int $nombreDePoints): self
     {
         $this->nombreDePoints = $nombreDePoints;
+
+        return $this;
+    }
+
+    public function isEstOrganisateur(): ?bool
+    {
+        return $this->estOrganisateur;
+    }
+
+    public function setEstOrganisateur(bool $estOrganisateur): self
+    {
+        $this->estOrganisateur = $estOrganisateur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Course>
+     */
+    public function getLesCoursesOrganisees(): Collection
+    {
+        return $this->lesCoursesOrganisees;
+    }
+
+    public function addLesCoursesOrganisee(Course $lesCoursesOrganisee): self
+    {
+        if (!$this->lesCoursesOrganisees->contains($lesCoursesOrganisee)) {
+            $this->lesCoursesOrganisees->add($lesCoursesOrganisee);
+            $lesCoursesOrganisee->setUnOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLesCoursesOrganisee(Course $lesCoursesOrganisee): self
+    {
+        if ($this->lesCoursesOrganisees->removeElement($lesCoursesOrganisee)) {
+            // set the owning side to null (unless already changed)
+            if ($lesCoursesOrganisee->getUnOrganisateur() === $this) {
+                $lesCoursesOrganisee->setUnOrganisateur(null);
+            }
+        }
 
         return $this;
     }
