@@ -41,9 +41,16 @@ class ApiController extends AbstractController
         return new JsonResponse($lesCoursesParticipeesID);
     }
 
-    #[Route('/api/coursesOrganisees/{id}', name: 'les_coureurs')]
-    public function coursesOrganisees(CourseRepository $courses, User $idUser)
+    #[Route('/api/coursesOrganisees/{idUser}', name: 'les_courses_organisees')]
+    #[Route('/api/coursesOrganisees/{idUser}/course/{idCourse}', name: 'la_course_organisee')]
+    public function coursesOrganisees(CourseRepository $courses, User $idUser, Course $idCourse = null)
     {
+        if($idCourse != null)
+        {
+            return $this->render('liste_course/coursesOrganisateur.html.twig', [
+                'idCourse' => $idCourse->getId()
+            ]);
+        }
         if($idUser->isEstOrganisateur())
         {
             $lesCourses = $courses->findBy(array('unOrganisateur' => $idUser));
@@ -56,10 +63,10 @@ class ApiController extends AbstractController
                     'dateCourse' => $uneCourse->getDate()->format('Y-m-d')
                 ];
             }
-            return $data;
+            return new JsonResponse($data);
         }
         else{
-            return null;
+            return new JsonResponse(null);
         }
     }
 

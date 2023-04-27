@@ -29,4 +29,9 @@ class ListeCoursesController extends AbstractController
             'historique' => '1'
         ]);
     }
+    #[Route('/courses/organisees', name : 'couses_organisee')]
+    public function courseOrganisee()
+    {
+        return $this->render('liste_course/courseOrganisees.html.twig');
+    }
 }
