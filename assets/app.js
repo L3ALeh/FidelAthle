@@ -8,6 +8,7 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import '@fortawesome/fontawesome-free/css/all.css'
 import './styles/app.scss';
+import Draggable from 'draggable';
 import { createApp } from 'vue';
 import ListeCourses from './js/ListeCourses.vue'
 import HistoriqueDesCourses from './js/HistoriqueDesCourses.vue'

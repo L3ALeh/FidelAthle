@@ -8,7 +8,6 @@ use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\RecompenseRepository;
 use App\Repository\ResultatCourseRepository;
-use App\Repository\RecompenseRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -71,22 +70,36 @@ class ApiController extends AbstractController
         }
     }
 
+    #[Route('/api/tempsCoureur/{idCoureur}/temps/{temps}/course/{idCourse}', name: 'changement_temps_coureur')]
+    public function enregistrementTempsCoureur(ResultatCourseRepository $courseRep, User $idCoureur, string $temps, Course $idCourse, EntityManagerInterface $manager = null)
+    {
+        $leResultatCoureur = $courseRep->findOneBy(array('uneCourse' => $idCourse, 'leUser' => $idCoureur));
+
+        $leResultatCoureur = $leResultatCoureur->setTemps($temps);
+
+        $manager->persist($leResultatCoureur);
+
+        $manager->flush();
+
+        return new JsonResponse(true);
+    }
+
     #[Route('/api/lesCoureurs/{id}', name: 'les_coureurs')]
     public function coureursResultats(ResultatCourseRepository $coursesRep, Course $laCourse)
     {
-        $lesResultats = $coursesRep->findOneBy(array('uneCourse' => $laCourse));
+        $lesResultats = $coursesRep->findBy(array('uneCourse' => $laCourse));
         $data = [];
         foreach($lesResultats as $unResultat)
         {
             $data[] = [
+                'id' => $unResultat->getId(),
                 'coureur' => $unResultat->getLeUser()->getNom() + ' ' + $unResultat->getLeUser()->getPrenom(),
                 'classement' => $unResultat->getPosition(),
                 'temps' => $unResultat->getTemps(),
                 'moyenne' => $unResultat->getVitesseMoyenne()
             ];
         }
-        return $data;
-
+        return new JsonResponse($data);
     }
 
     #[Route('/api/lesCourses/{value}/{id}', name: 'les_courses')]

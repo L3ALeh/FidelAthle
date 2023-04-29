@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="c in lesCourses" @mouseover="selectCourse(c.id)" @mouseleave="switchCourse()" >
+                <tr v-for="c in lesCourses" @mouseenter="selectCourse(c.id)" @mouseleave="switchCourse()" >
                     <th>
                         <p>{{ c.nomCourse }}</p>
                     </th>
@@ -30,7 +30,9 @@ export default{
         return {
             lesCourses : null,
             userId : null,
-            hoverTimeoutId: null
+            hoverTimeoutId : null,
+            courseId : null,
+            url : null
         }
     },
     created() {
@@ -46,14 +48,15 @@ export default{
     },
     methods: {
         selectCourse(idCourse){
-            this.hoverTimeoutId = setTimeout(() => { 
-                window.location.href = '../templates/liste_course/coursesOrganisateur.html.twig';
-            }, 3000);
+            this.courseId = idCourse;
+            this.hoverTimeoutId = setTimeout(this.consoleTest, 3000);
         },
         switchCourse(){
             clearTimeout(this.hoverTimeoutId);
             this.hoverTimeoutId = null;
-            console.log(this.hoverTimeoutId);
+        },
+        consoleTest(){
+            window.location.href = '/api/coursesOrganisees/' + this.userId + '/course/' + this.courseId;
         }
     }
 }
@@ -62,7 +65,7 @@ export default{
 
 tbody th:hover{
     animation-name: number_cursor;
-    animation-duration: 3s;
+    animation-duration: 4s;
 }
 
 @keyframes number_cursor {
