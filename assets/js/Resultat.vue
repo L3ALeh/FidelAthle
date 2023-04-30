@@ -19,18 +19,18 @@
             </thead>
             <tbody>
                 <tr v-for="(c, index) in lesCoureurs">
-                    <td v-for="i in lesCoureurs.length" :key="i">
-                        <p>{{ i }}</p>
+                    <td>
+                        <p>{{ index + 1 }}</p>
                     </td>
                     <td>
                         <p>{{ c.coureur }}</p>
                     </td>
                     <td>
-                        <p v-if="hiddenTime==false" @dblclick="changementTemps()">{{ c.temps }}</p>
-                        <p v-else><input placeholder="__:__:__" v-model="text" @keypress.enter="changementTemps(text, c.id)" type="text"></p>
+                        <p v-if="hiddenTime.indexOf(c.id) === -1" @dblclick="changementTemps(c.id)">{{ c.temps }}</p>
+                        <p v-else><input placeholder="__:__:__" v-model="text" @keypress.enter="changementTemps(c.id, text)" type="text"></p>
                     </td>
                     <td>
-                        <p>{{ c.moyenne }} km/h</p>
+                        <p>{{ parseFloat(c.moyenne).toFixed(2) }} km/h</p>
                     </td>
                 </tr>
             </tbody>
@@ -38,34 +38,36 @@
     </div>
 </template>
 <script>
-import Draggable from 'draggable';
 export default{
     data() {
         return {
             lesCoureurs : null,
             courseId : null,
-            hiddenTime : false,
+            hiddenTime : [],
             userId : null
         }
     },
     methods: {
+        majClassement() {
+
+        },
         miseajour() {
             fetch('/api/lesCoureurs/' + this.courseId)
                 .then(response => response.json())
                 .then(data => { this.lesCoureurs = data; })
         },
-        changementTemps(newTime = null, idResCourse= null) {
-            if(this.hiddenTime == false){
-                this.hiddenTime = true;
+        changementTemps(idResCourse, newTime = null) {
+            if(!this.hiddenTime.includes(idResCourse)){
+                this.hiddenTime.push(idResCourse);
             }
             else{
-                this.hiddenTime = false;
+                this.hiddenTime.splice(this.hiddenTime.indexOf(idResCourse), 1);
                 if(newTime != null && newTime != ''){
                     fetch('/api/tempsCoureur/' + idResCourse + '/temps/' + newTime)
                         .then(response => response.json())
                 }
+                this.majClassement();
             }
-            
         }
     },
     created() {
@@ -79,13 +81,5 @@ export default{
             this.miseajour();
         }, 10000)
     },
-    //mounted() {
-    //    const sortable = new Draggable.Sortable(this.$el.querySelector('tbody'), {
-    //        draggable: 'tr',
-    //        delay: 200,
-    //        animation: 150
-    //    })
-    //}
-
 }
 </script>
