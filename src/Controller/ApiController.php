@@ -70,10 +70,10 @@ class ApiController extends AbstractController
         }
     }
 
-    #[Route('/api/tempsCoureur/{idCoureur}/temps/{temps}/course/{idCourse}', name: 'changement_temps_coureur')]
-    public function enregistrementTempsCoureur(ResultatCourseRepository $courseRep, User $idCoureur, string $temps, Course $idCourse, EntityManagerInterface $manager = null)
+    #[Route('/api/tempsCoureur/{idResCourse}/temps/{temps}', name: 'changement_temps_coureur')]
+    public function enregistrementTempsCoureur(ResultatCourseRepository $courseRep, ResultatCourse $idResCourse, string $temps, EntityManagerInterface $manager = null)
     {
-        $leResultatCoureur = $courseRep->findOneBy(array('uneCourse' => $idCourse, 'leUser' => $idCoureur));
+        $leResultatCoureur = $courseRep->findOneBy(array('id' => $idResCourse));
 
         $leResultatCoureur = $leResultatCoureur->setTemps($temps);
 
@@ -93,7 +93,7 @@ class ApiController extends AbstractController
         {
             $data[] = [
                 'id' => $unResultat->getId(),
-                'coureur' => $unResultat->getLeUser()->getNom() + ' ' + $unResultat->getLeUser()->getPrenom(),
+                'coureur' => $unResultat->getLeUser()->getNom() . ' ' . $unResultat->getLeUser()->getPrenom(),
                 'classement' => $unResultat->getPosition(),
                 'temps' => $unResultat->getTemps(),
                 'moyenne' => $unResultat->getVitesseMoyenne()
@@ -156,6 +156,8 @@ class ApiController extends AbstractController
         $resCourse = new ResultatCourse();
         
         $resCourse->setLeUser($user);
+
+        $resCourse->setTemps('00:00:00');
 
         $resCourse->setUneCourse($course);
 
