@@ -20,23 +20,30 @@ class RegistrationController extends AbstractController
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
-
+        dump($form->get('estOrganisateur'));
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
+            if($form->get('estOrganisateur')->isChecked())
+            {
+                $user->setEstOrganisateur(true);
+            }
+            else{
+                $user->setEstOrganisateur(false);
+            }
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 ))
-                ->setNombreDePoints('0')
-                ->setEstOrganisateur(false);
+                ->setNombreDePoints('0');
+                
             
 
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('retour');
+            return $this->redirectToRoute('home');
         }
 
         return $this->render('registration/register.html.twig', [

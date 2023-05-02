@@ -31,12 +31,10 @@ Inscription
         {{ form_row(registrationForm.plainPassword, {
             label: 'Mot de passe :      '
         }) }}
-
         <br>
-        {{ form_row(registrationForm.Accepter_les_conditions) }}
-
-        <br>
-
+        {{ form_row(registrationForm.estOrganisateur) }}
+        
+            <br>
         <button type="submit" class="btn btn-primary">S'inscrire</button>
     {{ form_end(registrationForm) }}
     </div>
