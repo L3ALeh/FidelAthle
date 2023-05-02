@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\ResultatCourseRepository;
-use App\Repository\RecompenseRepository;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -41,9 +40,16 @@ class ApiController extends AbstractController
         return new JsonResponse($lesCoursesParticipeesID);
     }
 
-    #[Route('/api/coursesOrganisees/{id}', name: 'les_coureurs')]
-    public function coursesOrganisees(CourseRepository $courses, User $idUser)
+    #[Route('/api/coursesOrganisees/{idUser}', name: 'les_courses_organisees')]
+    #[Route('/api/coursesOrganisees/{idUser}/course/{idCourse}', name: 'la_course_organisee')]
+    public function coursesOrganisees(CourseRepository $courses, User $idUser, Course $idCourse = null)
     {
+        if($idCourse != null)
+        {
+            return $this->render('liste_course/coursesOrganisateur.html.twig', [
+                'idCourse' => $idCourse->getId()
+            ]);
+        }
         if($idUser->isEstOrganisateur())
         {
             $lesCourses = $courses->findBy(array('unOrganisateur' => $idUser));
@@ -56,29 +62,43 @@ class ApiController extends AbstractController
                     'dateCourse' => $uneCourse->getDate()->format('Y-m-d')
                 ];
             }
-            return $data;
+            return new JsonResponse($data);
         }
         else{
-            return null;
+            return new JsonResponse(null);
         }
+    }
+
+    #[Route('/api/tempsCoureur/{idResCourse}/temps/{temps}', name: 'changement_temps_coureur')]
+    public function enregistrementTempsCoureur(ResultatCourseRepository $courseRep, ResultatCourse $idResCourse, string $temps, EntityManagerInterface $manager = null)
+    {
+        $leResultatCoureur = $courseRep->findOneBy(array('id' => $idResCourse));
+
+        $leResultatCoureur = $leResultatCoureur->setTemps($temps);
+
+        $manager->persist($leResultatCoureur);
+
+        $manager->flush();
+
+        return new JsonResponse(true);
     }
 
     #[Route('/api/lesCoureurs/{id}', name: 'les_coureurs')]
     public function coureursResultats(ResultatCourseRepository $coursesRep, Course $laCourse)
     {
-        $lesResultats = $coursesRep->findOneBy(array('uneCourse' => $laCourse));
+        $lesResultats = $coursesRep->findBy(array('uneCourse' => $laCourse));
         $data = [];
         foreach($lesResultats as $unResultat)
         {
             $data[] = [
-                'coureur' => $unResultat->getLeUser()->getNom() + ' ' + $unResultat->getLeUser()->getPrenom(),
+                'id' => $unResultat->getId(),
+                'coureur' => $unResultat->getLeUser()->getNom() . ' ' . $unResultat->getLeUser()->getPrenom(),
                 'classement' => $unResultat->getPosition(),
                 'temps' => $unResultat->getTemps(),
                 'moyenne' => $unResultat->getVitesseMoyenne()
             ];
         }
-        return $data;
-
+        return new JsonResponse($data);
     }
 
     #[Route('/api/lesCourses/{value}/{id}', name: 'les_courses')]
@@ -135,6 +155,8 @@ class ApiController extends AbstractController
         $resCourse = new ResultatCourse();
         
         $resCourse->setLeUser($user);
+
+        $resCourse->setTemps('00:00:00');
 
         $resCourse->setUneCourse($course);
 

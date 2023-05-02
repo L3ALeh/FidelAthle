@@ -14,6 +14,7 @@ import HistoriqueDesCourses from './js/HistoriqueDesCourses.vue'
 import { Tooltip, Toast, Popover } from 'bootstrap';
 import './bootstrap';
 import Bouton from './js/components/bouton.vue'
+import ListeCourseOrganisateurs from './js/ListeCourseOrganisateurs.vue'
 import ListeRecompenses from './js/ListeRecompenses.vue'
 import BouttonCourses from './js/components/bouttonCourses.vue'
 import Result from './js/Resultat.vue'
@@ -22,4 +23,5 @@ createApp(HistoriqueDesCourses).mount('#historique-course')
 createApp(BouttonCourses).mount('#bouton-courses')
 createApp(ListeCourses).mount('#liste-course')
 createApp(ListeRecompenses).mount('#liste-recompenses')
+createApp(ListeCourseOrganisateurs).mount('#liste-course-organisee')
 
