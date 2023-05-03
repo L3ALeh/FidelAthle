@@ -18,9 +18,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(c, index) in lesCoureurs">
+                <tr v-for="c in lesCoureurs">
                     <td>
-                        <p>{{ index + 1 }}</p>
+                        <p>{{ c.classement }}</p>
                     </td>
                     <td>
                         <p>{{ c.coureur }}</p>
@@ -49,12 +49,15 @@ export default{
     },
     methods: {
         majClassement() {
-
-        },
-        miseajour() {
-            fetch('/api/lesCoureurs/' + this.courseId)
-                .then(response => response.json())
-                .then(data => { this.lesCoureurs = data; })
+            var compteur = 1
+            var array = []
+            this.lesCoureurs.forEach(element => {
+                element.classement = compteur;
+                array.push(element.classement);
+                compteur += 1;
+            });
+            fetch('/api/post/coureurs/' + array + '/course/' + this.courseId)
+                .then(response => response.json());
         },
         changementTemps(idResCourse, newTime = null) {
             if(!this.hiddenTime.includes(idResCourse)){
@@ -66,8 +69,14 @@ export default{
                     fetch('/api/tempsCoureur/' + idResCourse + '/temps/' + newTime)
                         .then(response => response.json())
                 }
+                this.miseajour();
                 this.majClassement();
             }
+        },
+        miseajour(){
+            fetch('/api/lesCoureurs/' + this.courseId)
+                .then(response => response.json())
+                .then(data => { this.lesCoureurs = data; })
         }
     },
     created() {
@@ -76,10 +85,10 @@ export default{
         this.courseId = dataString
         const userString = appElement.dataset.user
         this.userId = JSON.parse(userString)
-        this.miseajour()
+        this.miseajour();
         setInterval(() => {
             this.miseajour();
-        }, 10000)
+        }, 2000)
     },
 }
 </script>

@@ -84,10 +84,25 @@ class ApiController extends AbstractController
         return new JsonResponse(true);
     }
 
+    #[Route('/api/post/coureurs/{array}/course/{laCourse}', name: 'post_coureurs')]
+    public function postResultatCourse(string $array, Course $laCourse, ResultatCourseRepository $coursesRep, EntityManagerInterface $manager)
+    {
+        $array = str_replace(',', '', $array);
+        $lesResultats = $coursesRep->findResCourseOrder($laCourse);
+        $compteur = 0;
+        foreach($lesResultats as $unResultat){
+            $unResultat->setPosition(strVal($array[$compteur]));
+            $compteur += 1;
+            $manager->persist($unResultat);
+            $manager->flush();
+        }
+        return new JsonResponse(true);
+    }
+
     #[Route('/api/lesCoureurs/{id}', name: 'les_coureurs')]
     public function coureursResultats(ResultatCourseRepository $coursesRep, Course $laCourse)
     {
-        $lesResultats = $coursesRep->findBy(array('uneCourse' => $laCourse));
+        $lesResultats = $coursesRep->findResCourseOrder($laCourse);
         $data = [];
         foreach($lesResultats as $unResultat)
         {

@@ -12,6 +12,7 @@ import { createApp } from 'vue';
 import ListeCourses from './js/ListeCourses.vue'
 import HistoriqueDesCourses from './js/HistoriqueDesCourses.vue'
 import { Tooltip, Toast, Popover } from 'bootstrap';
+import moment from 'moment';
 import './bootstrap';
 import Bouton from './js/components/bouton.vue'
 import ListeCourseOrganisateurs from './js/ListeCourseOrganisateurs.vue'

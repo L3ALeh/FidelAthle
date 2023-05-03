@@ -27,6 +27,7 @@
         "bootstrap": "^5.2.3",
         "draggable": "^4.2.0",
         "fa": "^1.0.1",
+        "moment": "^2.29.4",
         "vue": "^3.2.47",
         "vue-loader": "^17.0.1",
         "vue-template-compiler": "^2.7.14",
