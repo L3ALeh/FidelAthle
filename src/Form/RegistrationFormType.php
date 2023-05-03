@@ -22,13 +22,8 @@ class RegistrationFormType extends AbstractType
             ->add('Prenom')
             ->add('Pseudo')
             ->add('Adresse')
-            ->add('Accepter_les_conditions', CheckboxType::class, [
+            ->add('estOrganisateur', CheckboxType::class, [
                 'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => 'Vous devez acceptez nos conditions d utilisation.',
-                    ]),
-                ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,

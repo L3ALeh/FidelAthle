@@ -6,7 +6,6 @@ use App\Entity\ResultatCourse;
 use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
-use App\Repository\RecompenseRepository;
 use App\Repository\ResultatCourseRepository;
 use App\Repository\UserRepository;
 use DateTime;
