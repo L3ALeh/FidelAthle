@@ -2,24 +2,6 @@
     <div class="container"> 
         <div class="panel panel-primary">
             <div class="panel-heading"><h2>Les Courses</h2></div>  
-                <div class="filter">
-                    <div class="dropdown">
-                    <button class="dropbtn">Filtre &#x25BC;</button>
-                        <div class="dropdown-content">
-                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="dateCourse">Date</label>
-                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="distanceCourse">Distance</label>
-                            <div class="price-filter">
-                            <label for="price-range">Prix :</label>
-                            <input type="range" id="price-range" min="0" max="1000" step="10" value="500">
-                            <div class="price-value">
-                                <span>0 €</span>
-                                <span>1000 €</span>
-                            </div>
-                            </div>
-                            <label><input @click="filtre(value)" type="checkbox" name="filter" value="estInscrit">Déjà inscrits</label>
-                        </div>
-                    </div>
-                </div>
                 <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -38,8 +20,8 @@
                         <div v-else class="dropdown" @mouseover="showDropdown = true" @mouseleave="showDropdown = false">
                           <a>{{ laCourse.nomCourse }}</a>
                           <div class="dropdown-menu" v-if="showDropdown">
-                            <p>Classement : {{ laCourse.position }} / </p>
-                            <p>Moyenne : {{ laCourse.moyenne }} km/h </p>
+                            <p>Classement : {{ laCourse.position }} </p>
+                            <p>Moyenne : {{ laCourse.moyenne.toFixed(2) }} km/h </p>
                             <p>Temps : {{ laCourse.temps }}</p>
                             <p>test12</p>
                           </div>
@@ -50,7 +32,7 @@
                         <td>{{ laCourse.typeCourse }}</td>
                         <td>{{ laCourse.niveauCourse }}</td>
                         <td v-if="this.lesIntitules[6].visible==true">
-                            <button :disabled="coursesInscrites.indexOf(laCourse.id) !== -1"
+                            <button :disabled="coursesInscrites.indexOf(laCourse.id) !== -1 || leUser.estOrganisateur"
                             :class="{'disabled-button': coursesInscrites.indexOf(laCourse.id) !== -1}" v-on:click="inscription(laCourse.id)">
                                 <span v-if="coursesInscrites.indexOf(laCourse.id) !== -1">Validée</span>
                                 <span v-else>S'inscrire</span>
@@ -70,6 +52,7 @@ export default {
         return {
             dataString : null,
             userId : null,
+            leUser : null,
             showDropdown : false,
             sliceValue : null,
             lesCourses : null,
@@ -84,11 +67,6 @@ export default {
         }
     },
     methods: {
-        filtre(value) {
-            if(value=="dateCourse"){
-
-            }
-        },
         inscription(indexCourse) {
             fetch("/api/inscription/" + this.userId + "/" + indexCourse, {'method':'GET'})
             .then(response => response.json())
@@ -154,6 +132,9 @@ export default {
         }
         const userString = appElement.dataset.user
         this.userId = JSON.parse(userString)
+        fetch('/api/user/' + this.userId)
+          .then(response => response.json())
+          .then(leUser => this.leUser = leUser)
         fetch("/api/lesCourses/participe/" + this.userId, {'method':'GET'})
         .then(response => response.json())
         .then(lesCoursesParticipeesID => {

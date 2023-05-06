@@ -6,6 +6,7 @@ use App\Entity\ResultatCourse;
 use App\Entity\User;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
+use App\Repository\RecompenseRepository;
 use App\Repository\ResultatCourseRepository;
 use App\Repository\UserRepository;
 use DateTime;
@@ -24,6 +25,20 @@ class ApiController extends AbstractController
             'controller_name' => 'ApiController',
         ]);
     }
+
+    #[Route('/api/user/{id}', name: 'get_user')]
+    public function getLeUser(UserRepository $userRepository, User $id)
+    {
+        $leUser = $userRepository->findOneBy(array('id' => $id));
+
+        $data = [
+            'id' => $leUser->getId(),
+            'estOrganisateur' =>$leUser->isEstOrganisateur()
+        ];
+
+        return new JsonResponse($data);
+    }
+
 
     #[Route('/api/lesCourses/participe/{id}', name: 'les_courses_participe')]
     public function coursesParticipees(User $leUser = null, UserRepository $userRep)

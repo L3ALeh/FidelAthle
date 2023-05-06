@@ -22,30 +22,54 @@
       </button>
       <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
+        <div class="dropdown">
+          <li class="nav-item-dropdown">
+            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Courses
+            </a>
+            <div id="lescourses" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a labelledby="lescourses" class="dropdown-item" href="/courses/listes">A venir</a>
+              <a labelledby="lescourses" class="dropdown-item" href="/courses/organisees">Organisées</a>
+            </div>
+          </li>
+          </div>
           <li class="nav-item">
             <a class="nav-link" href="/voirRecompenses">Récompenses </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/courses/listes">Courses</a>
-          </li>
+          <div class="dropdown">
           <li class="nav-item-dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Mon Compte
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="/">Mon Profil</a>
-              <div id="bouton-courses" data="Mes Résultats de Courses">
+            <div id="leprofil" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a labelledby="leprofil" class="dropdown-item" href="/home">Mon Profil</a>
+              <div labelledby="leprofil" id="bouton-courses" data="Mes Résultats de Courses">
               </div>
               </div>
-          </li>  
+          </li>
+          </div>  
         </ul>
       </div>
-      <form class="d-flex">
-        <button class="btn btn-primary" type="button" href="/" >Connexion</button>
-      </form>
-      <form class="d-flex">
-        <button class="btn btn-primary" type="button">Déconnexion</button>
-      </form>
+      <div class="d-flex" style="margin-right:30px; margin-top:20px">
+        {% if app.user.estOrganisateur %}
+          <p style="color: white">Compte Organisateur</p>
+        {% else %}
+          <p style="color: white">Compte Coureur</p>
+        {% endif %}
+      </div>
+      {% if app.user == null %}
+      <div class="d-flex">
+        <a href="/login">
+          <button class="btn btn-primary" type="button">Connexion</button>
+        </a>
+      </div>
+      {% else %}
+      <div class="d-flex">
+        <a href="/logout">
+          <button class="btn btn-primary" type="button">Déconnexion</button>
+        </a>
+      </div>
+      {% endif %}
       </div>
     </nav>
 {% endblock %}
@@ -56,3 +80,21 @@
         {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
     </body>
 </html>
+<style>
+  
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  z-index: 1000;
+  display: none;
+  float: center;
+  min-width: 15rem;
+  font-size: 1rem;
+  color: #212529;
+  text-align: center;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 0.25rem;
+}
+</style>
