@@ -40,6 +40,15 @@ class ResultatCourseRepository extends ServiceEntityRepository
         }
     }
 
+    public function findResCourseOrder(Course $unecourse) : array
+    {
+        return $this->createQueryBuilder('rc')
+                ->where('rc.uneCourse = :result')
+                ->setParameter('result', $unecourse)
+                ->orderBy('rc.temps')
+                ->getQuery()
+                ->getResult();
+    }
 //    /**
 //     * @return ResultatCourse[] Returns an array of ResultatCourse objects
 //     */
