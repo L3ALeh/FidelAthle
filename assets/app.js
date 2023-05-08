@@ -10,7 +10,6 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import './styles/app.scss';
 import { createApp } from 'vue';
 import ListeCourses from './js/ListeCourses.vue'
-import HistoriqueDesCourses from './js/HistoriqueDesCourses.vue'
 import { Tooltip, Toast, Popover } from 'bootstrap';
 import moment from 'moment';
 import './bootstrap';
@@ -20,7 +19,6 @@ import ListeRecompenses from './js/ListeRecompenses.vue'
 import BouttonCourses from './js/components/bouttonCourses.vue'
 import Result from './js/Resultat.vue'
 createApp(Result).mount('#result-course')
-createApp(HistoriqueDesCourses).mount('#historique-course')
 createApp(BouttonCourses).mount('#bouton-courses')
 createApp(ListeCourses).mount('#liste-course')
 createApp(ListeRecompenses).mount('#liste-recompenses')

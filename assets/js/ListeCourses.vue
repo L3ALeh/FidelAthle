@@ -2,6 +2,7 @@
     <div class="container"> 
         <div class="panel panel-primary">
             <div class="panel-heading"><h2>Les Courses</h2></div>  
+            <div style="height: 300px; overflow: auto">
                 <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -12,8 +13,8 @@
                                 <span v-else class="fa fa-fw fa-sort-down sort-desc"></span>
                             </a>
                         </th>
-                    </tr>
-                </thead>
+                    </tr> 
+                </thead>  
                 <tbody>
                     <tr v-for="laCourse in lesCourses"> 
                         <td v-if="this.lesIntitules[6].visible==true">{{ laCourse.nomCourse }}</td>
@@ -41,6 +42,7 @@
                     </tr>
                 </tbody>
             </table>
+          </div>
         </div>
     </div>
 </template>
@@ -360,6 +362,8 @@ input[type="checkbox"] + label {
 table {
   width: 100%;
   border-collapse: collapse;
+  /*max-height: 200px;
+  overflow-y: scroll;*/
 }
 
 thead {

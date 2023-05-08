@@ -31,6 +31,9 @@ class ResultatCourse
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $uneCourse = null;
 
+    #[ORM\Column]
+    private ?bool $classementDefinitif = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +95,18 @@ class ResultatCourse
     public function setUneCourse(?Course $uneCourse): self
     {
         $this->uneCourse = $uneCourse;
+
+        return $this;
+    }
+
+    public function isClassementDefinitif(): ?bool
+    {
+        return $this->classementDefinitif;
+    }
+
+    public function setClassementDefinitif(bool $classementDefinitif): self
+    {
+        $this->classementDefinitif = $classementDefinitif;
 
         return $this;
     }

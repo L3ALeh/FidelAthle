@@ -98,14 +98,35 @@ class ApiController extends AbstractController
         return new JsonResponse(true);
     }
 
-    #[Route('/api/post/coureurs/{array}/course/{laCourse}', name: 'post_coureurs')]
-    public function postResultatCourse(string $array, Course $laCourse, ResultatCourseRepository $coursesRep, EntityManagerInterface $manager)
+    #[Route('/api/ajoutPoint/{array}/course/{idCourse}')]
+    public function gestionPoints(string $array, Course $idCourse, ResultatCourseRepository $resultatCourseRepository, UserRepository $userRepository, EntityManagerInterface $manager)
     {
-        $array = str_replace(',', '', $array);
+        $array = explode(',', $array);
+        $lesResultats = $resultatCourseRepository->findResCourseOrder($idCourse);
+        $compteur = 0;
+        foreach($lesResultats as $unResultat) {
+            $unUser = $userRepository->findOneBy(array('id' => $unResultat->getLeUser()->getId()));
+            $unUser->setNombreDePoints($unUser->getNombreDePoints() + $array[$compteur]);
+            $compteur += 1;
+            $manager->persist($unUser);
+            $manager->flush();
+        }
+        return new JsonResponse(true);
+    }
+
+    #[Route('/api/post/coureurs/{array}/course/{laCourse}/{choix}', name: 'post_coureurs')]
+    public function postResultatCourse(string $array, Course $laCourse, string $choix, ResultatCourseRepository $coursesRep, EntityManagerInterface $manager)
+    {
+        $array = explode(',', $array);
         $lesResultats = $coursesRep->findResCourseOrder($laCourse);
         $compteur = 0;
         foreach($lesResultats as $unResultat){
-            $unResultat->setPosition(strVal($array[$compteur]));
+            if($choix == 'position'){
+                $unResultat->setPosition(strVal($array[$compteur]));
+            }
+            else{
+                $unResultat->setClassementDefinitif(strVal($array[$compteur]));
+            }
             $compteur += 1;
             $manager->persist($unResultat);
             $manager->flush();
@@ -125,9 +146,23 @@ class ApiController extends AbstractController
                 'coureur' => $unResultat->getLeUser()->getNom() . ' ' . $unResultat->getLeUser()->getPrenom(),
                 'classement' => $unResultat->getPosition(),
                 'temps' => $unResultat->getTemps(),
-                'moyenne' => $unResultat->getVitesseMoyenne()
+                'moyenne' => $unResultat->getVitesseMoyenne(),
+                'definitif' => $unResultat->isClassementDefinitif()
             ];
         }
+        return new JsonResponse($data);
+    }
+
+    #[Route('/api/get/course/{id}', name: 'get_la_course')]
+    public function getCourse(Course $id, CourseRepository $courseRepository)
+    {
+        $laCourse = $courseRepository->findOneBy(array('id' => $id));
+
+        $data = [
+            'id' => $laCourse->getId(),
+            'niveau' => $laCourse->getUnNiveauCourse()
+        ];
+
         return new JsonResponse($data);
     }
 
@@ -190,6 +225,8 @@ class ApiController extends AbstractController
 
         $resCourse->setUneCourse($course);
 
+        $resCourse->setClassementDefinitif(false);
+
         $manager->persist($resCourse);
 
         $manager->flush();
@@ -197,9 +234,7 @@ class ApiController extends AbstractController
         return new JsonResponse('retour');
     }
 
-
     #[Route('/api/lesRecompenses', name: 'recompensesaffichees')]
-
     public function GestionRecompenses(RecompenseRepository $uneRecompense)
     {
 

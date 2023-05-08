@@ -35,19 +35,73 @@
                 </tr>
             </tbody>
         </table>
+        <button :disabled="disable" style="height: 50px; margin-top: 20px; position:relative ;top:80%; left:40%;" @click="onOk()">Valider les résultats définitivement</button> 
+        <ConfirmDialog></ConfirmDialog>
+        <DialogWrapper />
     </div>
 </template>
 <script>
+import { DialogWrapper } from 'vue3-promise-dialog';
 export default{
     data() {
         return {
-            lesCoureurs : null,
+            DialogWrapper,
+            lesCoureurs : [],
             courseId : null,
             hiddenTime : [],
-            userId : null
+            userId : null,
+            disable : false,
+            laCourse : null,
+            lesPoints : []
         }
     },
     methods: {
+        async onOk() {
+            this.lesCoureurs.forEach(unCoureur => {
+                this.disable = unCoureur.definitif
+            });
+            if(!this.disable) {
+                let ok = await confirm("Etes vous-sur de faire ça ?")
+                var array = []
+                var points = 0
+                if(ok) {
+                    this.lesCoureurs.forEach(unCoureur => {
+                        array.push(true)
+                        if(unCoureur.classement == 1) {
+                            points += 10
+                        }
+                        else if(unCoureur.classement <= 5) {
+                            points += 5
+                        }
+                        else if(unCoureur.classement <= 10) {
+                            points += 3
+                        }
+                        else {
+                            points += 1
+                        }
+                        if(this.laCourse.niveau == 1) {
+                            points = points * 4
+                        }
+                        else if(this.laCourse.niveau == 2) {
+                            points = points * 3
+                        }
+                        else if(this.laCourse.niveau == 3) {
+                            points = points * 2
+                        }
+                        else {
+                            points = points * 1.5
+                        }
+                        this.lesPoints.push(points)
+                        points = 0
+                    });
+                    this.disable = true
+                    fetch('/api/post/coureurs/' + array + '/course/' + this.courseId + '/definitif')
+                        .then(response => response.json());
+                    fetch('/api/ajoutPoint/' + this.lesPoints +'/course/' + this.courseId)
+                        .then(response => response.json());
+                }
+            }
+        },
         majClassement() {
             var compteur = 1
             var array = []
@@ -56,27 +110,32 @@ export default{
                 array.push(element.classement);
                 compteur += 1;
             });
-            fetch('/api/post/coureurs/' + array + '/course/' + this.courseId)
+            fetch('/api/post/coureurs/' + array + '/course/' + this.courseId + '/position')
                 .then(response => response.json());
         },
         changementTemps(idResCourse, newTime = null) {
-            if(!this.hiddenTime.includes(idResCourse)){
-                this.hiddenTime.push(idResCourse);
-            }
-            else{
-                this.hiddenTime.splice(this.hiddenTime.indexOf(idResCourse), 1);
-                if(newTime != null && newTime != ''){
-                    fetch('/api/tempsCoureur/' + idResCourse + '/temps/' + newTime)
-                        .then(response => response.json())
+            this.lesCoureurs.forEach(unCoureur => {
+                this.disable = unCoureur.definitif;
+            });
+            if(!this.disable){
+                if(!this.hiddenTime.includes(idResCourse)){
+                    this.hiddenTime.push(idResCourse);
                 }
-                this.miseajour();
-                this.majClassement();
+                else{
+                    this.hiddenTime.splice(this.hiddenTime.indexOf(idResCourse), 1);
+                    if(newTime != null && newTime != ''){
+                        fetch('/api/tempsCoureur/' + idResCourse + '/temps/' + newTime)
+                            .then(response => response.json())
+                    }
+                    this.miseajour();
+                    this.majClassement();
+                }
             }
         },
         miseajour(){
             fetch('/api/lesCoureurs/' + this.courseId)
                 .then(response => response.json())
-                .then(data => { this.lesCoureurs = data; })
+                .then(data => { this.lesCoureurs = data;})
         }
     },
     created() {
@@ -85,6 +144,9 @@ export default{
         this.courseId = dataString
         const userString = appElement.dataset.user
         this.userId = JSON.parse(userString)
+        fetch('/api/get/course/' + this.courseId)
+            .then(response => response.json())
+            .then(data => { this.laCourse = data; })
         this.miseajour();
         setInterval(() => {
             this.miseajour();

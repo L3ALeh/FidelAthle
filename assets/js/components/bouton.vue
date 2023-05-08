@@ -1,5 +1,5 @@
 <template>
-    <a id="navbar" href="/courses/historique"><button>{{ label }}</button></a>
+    <a id="navbar" href="/courses/historique">{{ label }}</a>
 </template>
   
 <script>
@@ -14,7 +14,7 @@
 <style>
 #navbar{
   text-decoration: none;
-  color: white;
+  color: black;
 }
 
 </style>
