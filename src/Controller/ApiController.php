@@ -8,6 +8,7 @@ use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\ResultatCourseRepository;
 use App\Repository\UserRepository;
+use App\Repository\RecompenseRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -208,4 +209,18 @@ class ApiController extends AbstractController
         return $this ->render('home_menu/homeMenu.html.twig');
     }
 
+
+    #[Route('/api/userProfil/{idUser}', name: 'le_profil_user')]
+    public function userProfil(UserRepository $userRep, User $idUser)
+    {
+        $leUser = $userRep->findOneBy(array('id' => $idUser->getId()));
+        $data = [
+            'nom'=>$leUser->getNom(),
+            'prenom'=>$leUser->getPrenom(),
+            'pseudo'=>$leUser->getPseudo(),
+            'adresse'=>$leUser->getAdresse(),
+            'email'=>$leUser->getEmail()
+        ];
+        return new JsonResponse($data);
+    }
 }
