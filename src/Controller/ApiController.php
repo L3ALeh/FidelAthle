@@ -301,6 +301,39 @@ class ApiController extends AbstractController
         return $this ->render('home_menu/homeMenu.html.twig');
     }
 
+    #[Route('/api/changementValeur/{intitule}/{texte}/{idUser}', name: 'profil_modif')]
+    public function changementValeur(string $intitule, string $texte, User $idUser, EntityManagerInterface $manager)
+    {
+        switch ($intitule) {
+            case "pseudo" :
+                $idUser->setPseudo($texte);
+                break;
+            case "email" :
+                $idUser->setEmail($texte);
+                break;
+            case "adresse" :
+                $idUser->setAdresse($texte);
+                break;
+            default :
+                break;
+        }
+
+        $manager->persist($idUser);
+
+        $manager->flush();
+
+        return new JsonResponse(true);
+    }
+
+    #[Route('/api/certificatMedical/{fichier}/{idUser}', name: 'certificatMedical')]
+    public function ajoutCertificat(string $fichier, User $idUser, EntityManagerInterface $manager)
+    {
+        $idUser->setCertificatMedical($fichier);
+        $manager->persist($idUser);
+        $manager->flush();
+        return new JsonResponse(true);
+    }
+
 
     #[Route('/api/userProfil/{idUser}', name: 'le_profil_user')]
     public function userProfil(UserRepository $userRep, User $idUser)

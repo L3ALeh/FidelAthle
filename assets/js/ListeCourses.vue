@@ -2,7 +2,7 @@
     <div class="container"> 
         <div class="panel panel-primary">
             <div class="panel-heading"><h2>Les Courses</h2></div>  
-            <div style="height: 300px; overflow: auto">
+            <div style="max-height: 300px; overflow: auto">
                 <table class="table table-bordered table-striped">
                 <thead>
                     <tr>

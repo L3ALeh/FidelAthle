@@ -58,6 +58,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'unOrganisateur', targetEntity: Course::class)]
     private Collection $lesCoursesOrganisees;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $certificatMedical = null;
+
     public function __construct()
     {
         $this->lesResultatsCourses = new ArrayCollection();
@@ -262,6 +265,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $lesCoursesOrganisee->setUnOrganisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCertificatMedical(): ?string
+    {
+        return $this->certificatMedical;
+    }
+
+    public function setCertificatMedical(?string $certificatMedical): self
+    {
+        $this->certificatMedical = $certificatMedical;
 
         return $this;
     }
