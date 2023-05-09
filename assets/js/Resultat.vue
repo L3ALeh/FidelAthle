@@ -52,7 +52,7 @@ export default{
             userId : null,
             disable : false,
             laCourse : null,
-            lesPoints : []
+            lesPoints : [],
         }
     },
     methods: {
@@ -117,19 +117,27 @@ export default{
             this.lesCoureurs.forEach(unCoureur => {
                 this.disable = unCoureur.definitif;
             });
-            if(!this.disable){
-                if(!this.hiddenTime.includes(idResCourse)){
-                    this.hiddenTime.push(idResCourse);
-                }
-                else{
-                    this.hiddenTime.splice(this.hiddenTime.indexOf(idResCourse), 1);
-                    if(newTime != null && newTime != ''){
-                        fetch('/api/tempsCoureur/' + idResCourse + '/temps/' + newTime)
-                            .then(response => response.json())
+            let date = new Date()
+            let year = date.getFullYear()
+            let month = (date.getMonth() + 1).toString().padStart(2, '0')
+            let day = date.getDate().toString().padStart(2, '0')
+            let formattedDate = `${year}-${month}-${day}`
+            if(this.laCourse.date.date < formattedDate)
+            {
+                if(!this.disable){
+                    if(!this.hiddenTime.includes(idResCourse)){
+                        this.hiddenTime.push(idResCourse);
                     }
-                    this.miseajour();
-                    this.majClassement();
-                }
+                    else{
+                        this.hiddenTime.splice(this.hiddenTime.indexOf(idResCourse), 1);
+                        if(newTime != null && newTime != ''){
+                            fetch('/api/tempsCoureur/' + idResCourse + '/temps/' + newTime)
+                                .then(response => response.json())
+                        }
+                        this.miseajour();
+                        this.majClassement();
+                    }
+                }                   
             }
         },
         miseajour(){

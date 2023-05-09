@@ -13,6 +13,7 @@ import ListeCourses from './js/ListeCourses.vue'
 import { Tooltip, Toast, Popover } from 'bootstrap';
 import moment from 'moment';
 import './bootstrap';
+import Popup from './js/components/popup.vue';
 import Bouton from './js/components/bouton.vue'
 import ListeCourseOrganisateurs from './js/ListeCourseOrganisateurs.vue'
 import ListeRecompenses from './js/ListeRecompenses.vue'

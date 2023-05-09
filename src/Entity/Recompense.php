@@ -24,12 +24,12 @@ class Recompense
     #[ORM\Column]
     private ?int $valeurPoints = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'lesRecompenses')]
-    private Collection $lesUsers;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
     public function __construct()
     {
-        $this->lesUsers = new ArrayCollection();
+
     }
 
     public function getId(): ?int
@@ -73,29 +73,14 @@ class Recompense
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getLesUsers(): Collection
+    public function getImage(): ?string
     {
-        return $this->lesUsers;
+        return $this->image;
     }
 
-    public function addLesUser(User $lesUser): self
+    public function setImage(?string $image): self
     {
-        if (!$this->lesUsers->contains($lesUser)) {
-            $this->lesUsers->add($lesUser);
-            $lesUser->addLesRecompense($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLesUser(User $lesUser): self
-    {
-        if ($this->lesUsers->removeElement($lesUser)) {
-            $lesUser->removeLesRecompense($this);
-        }
+        $this->image = $image;
 
         return $this;
     }

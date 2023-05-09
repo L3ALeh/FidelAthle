@@ -5,12 +5,15 @@ namespace App\Controller;
 use App\Entity\ResultatCourse;
 use App\Entity\User;
 use App\Entity\Course;
+use App\Entity\Recompense;
+use App\Entity\Obtention;
 use App\Repository\CourseRepository;
+use App\Repository\ObtentionRepository;
 use App\Repository\RecompenseRepository;
 use App\Repository\ResultatCourseRepository;
 use App\Repository\UserRepository;
-use App\Repository\RecompenseRepository;
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -161,7 +164,8 @@ class ApiController extends AbstractController
 
         $data = [
             'id' => $laCourse->getId(),
-            'niveau' => $laCourse->getUnNiveauCourse()
+            'niveau' => $laCourse->getUnNiveauCourse(),
+            'date' => $laCourse->getDate()
         ];
 
         return new JsonResponse($data);
@@ -235,6 +239,27 @@ class ApiController extends AbstractController
         return new JsonResponse('retour');
     }
 
+    #[Route('/api/ajoutRecompense/{idRecompense}/{idUser}', name: 'post_recompense')]
+    public function AjoutRecompense(Recompense $idRecompense, User $idUser, ObtentionRepository $obtentionRepository, EntityManagerInterface $manager)
+    {
+        $uneObtention = $obtentionRepository->findOneBy(array('unUser' => $idUser, 'uneRecompense' => $idRecompense));
+        if($uneObtention != null) {
+            $uneObtention->setQuantite($uneObtention->getQuantite() + 1);
+            $manager->persist($uneObtention);
+        }
+        else {
+            $uneNouvelleObtention = new Obtention();
+            $uneNouvelleObtention->setQuantite(1);
+            $uneNouvelleObtention->setUneRecompense($idRecompense);
+            $uneNouvelleObtention->setUnUser($idUser);
+            $manager->persist($uneNouvelleObtention);
+        }
+        $idUser->setNombreDePoints($idUser->getNombreDePoints() - $idRecompense->getValeurPoints());
+        $manager->persist($idUser);
+        $manager->flush();
+        return new JsonResponse(true);
+    }
+
     #[Route('/api/lesRecompenses', name: 'recompensesaffichees')]
     public function GestionRecompenses(RecompenseRepository $uneRecompense)
     {
@@ -245,6 +270,8 @@ class ApiController extends AbstractController
         foreach($lesRecompenses as $uneRec)
         {
             $data[]=[
+                'id' => $uneRec->getId(),
+                'image' => $uneRec->getImage(),
                 'label'=> $uneRec->getLabel(),
                 'valeur'=> $uneRec->getValeur(),
                 'valeurPoints'=> $uneRec->getValeurPoints()

@@ -49,9 +49,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'leUser', targetEntity: ResultatCourse::class)]
     private Collection $lesResultatsCourses;
 
-    #[ORM\ManyToMany(targetEntity: Recompense::class, inversedBy: 'lesUsers')]
-    private Collection $lesRecompenses;
-
     #[ORM\Column]
     private ?int $nombreDePoints = null;
 
@@ -64,7 +61,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->lesResultatsCourses = new ArrayCollection();
-        $this->lesRecompenses = new ArrayCollection();
         $this->lesCoursesOrganisees = new ArrayCollection();
     }
 
@@ -212,30 +208,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $lesResultatsCourse->setLeUser(null);
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Recompense>
-     */
-    public function getLesRecompenses(): Collection
-    {
-        return $this->lesRecompenses;
-    }
-
-    public function addLesRecompense(Recompense $lesRecompense): self
-    {
-        if (!$this->lesRecompenses->contains($lesRecompense)) {
-            $this->lesRecompenses->add($lesRecompense);
-        }
-
-        return $this;
-    }
-
-    public function removeLesRecompense(Recompense $lesRecompense): self
-    {
-        $this->lesRecompenses->removeElement($lesRecompense);
 
         return $this;
     }
